@@ -9,28 +9,13 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import os from 'os';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { CID } from 'multiformats/cid';
-import * as Ctl from 'ipfsd-ctl';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-
-const port = 9090;
-
-const server = Ctl.createServer(
-  port,
-  {
-    ipfsHttpModule: require('ipfs-http-client'),
-  },
-  {
-    go: {
-      ipfsBin: require('go-ipfs').path(),
-    },
-  }
-);
+import { startNode, stopNode } from './network';
+import { subscribe, peers, list, unsubscribe, publish } from './network/pubsub';
 
 export default class AppUpdater {
   constructor() {
@@ -41,8 +26,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-let ipfsNode: any;
-let ipfsd: any;
+let node: any;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -88,44 +72,12 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  try {
-    //* starting server for go-ipfs as subprocess
-    await server.start();
-    //* controller for IPFS API
-
-    ipfsd = await Ctl.createController({
-      remote: false,
-      ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require('go-ipfs')
-        .path()
-        .replace('app.asar', 'app.asar.unpacked'),
-      endpoint: `http://localhost:${port}`,
-      ipfsOptions: {
-        repo: path.join(os.homedir(), '.point'),
-        config: {
-          Datastore: {
-            GCPeriod: '1h',
-            StorageGCWatermark: `99`,
-            StorageMax: '350GB',
-          },
-        },
-      },
-    });
-
-    ipfsNode = ipfsd.api;
-    const id = await ipfsNode.id();
-    console.log(id);
-    //* Create local folder for MFS
-    try {
-      await ipfsNode.files.mkdir('/');
-      console.log('Congrats! Directory is created');
-    } catch (er) {
-      console.log('Local directory already created');
-    }
-  } catch (err) {
-    console.log(err);
-    log.warn(err);
-  }
+  node = await startNode();
+  // console.log(node);
+  await subscribe(node, 'lobby');
+  let me = await node.id();
+  me = me.id;
+  await publish(node, 'lobby', `My peer id: ${me}`);
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -154,9 +106,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('closed', async () => {
-    await ipfsNode.stop();
-    await ipfsd.stop();
-    await server.stop();
+    await stopNode();
     mainWindow = null;
   });
 
@@ -181,22 +131,16 @@ const createWindow = async () => {
 app.on('window-all-closed', async () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  await ipfsNode.stop();
-  await ipfsd.stop();
-  await server.stop();
+  await stopNode();
   app.quit();
 });
 
 app.on('before-quit', async (event) => {
-  await ipfsNode.stop();
-  await ipfsd.stop();
-  await server.stop();
+  await stopNode();
 });
 
 app.on('will-quit', async (event) => {
-  await ipfsNode.stop();
-  await ipfsd.stop();
-  await server.stop();
+  await stopNode();
 });
 
 app
