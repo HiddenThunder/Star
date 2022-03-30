@@ -67,6 +67,7 @@ a:hover {
   border: solid black 1px;
   height: 80vh;
   width: 50vh;
+  /* display: flex; */
 }
 
 #peers {
@@ -85,4 +86,12 @@ div.inline {
   height: 10vh;
   width: 91vh;
   margin-top: 2px;
+}
+
+#icon {
+  text-align: center;
+}
+
+.icon {
+  max-height: 30px;
 }

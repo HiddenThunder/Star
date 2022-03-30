@@ -1,7 +1,7 @@
 {
   "name": "electron-react-boilerplate",
   "version": "4.5.0",
-  "description": "A foundation for scalable desktop apps",
+  "description": "Encrypted p2p chat",
   "main": "./dist/main/main.js",
   "author": {
     "name": "Point",
