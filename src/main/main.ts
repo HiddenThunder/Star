@@ -15,7 +15,15 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { startNode, stopNode } from './network';
-import { subscribe, peers, list, unsubscribe, publish } from './network/pubsub';
+import LOBBY, {
+  echo,
+  subscribe,
+  peers,
+  list,
+  unsubscribe,
+  publish,
+} from './network/pubsub';
+import genSharedSecret from './crypto';
 
 export default class AppUpdater {
   constructor() {
@@ -72,12 +80,15 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  //* IPFS STUFF BEGIN********* ------------------- //
   node = await startNode();
-  // console.log(node);
-  await subscribe(node, 'lobby');
-  let me = await node.id();
-  me = me.id;
-  await publish(node, 'lobby', `My peer id: ${me}`);
+  await subscribe(node, LOBBY, echo);
+  const me = await node.id();
+  const pubKey = me.publicKey;
+  await subscribe(node, pubKey, echo);
+  await publish(node, LOBBY, `My public key: ${pubKey}`);
+  await publish(node, pubKey, `I'm subscribed to myself`);
+  //* IPFS STUFF END*********** ------------------- //
 
   mainWindow = new BrowserWindow({
     show: false,

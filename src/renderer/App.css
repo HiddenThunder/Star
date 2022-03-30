@@ -4,22 +4,17 @@
  */
 body {
   position: relative;
-  color: white;
   height: 100vh;
-  background: linear-gradient(
-    200.96deg,
-    #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
-  );
+  background: linear-gradient(200.96deg, #f8f8f8 -29.09%, #c5ffe9 129.35%);
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
 }
 
-button {
+/* button {
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -59,4 +54,35 @@ a:hover {
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+} */
+
+#channels {
+  border: solid black 1px;
+  height: 80vh;
+  width: 20vh;
+  margin-right: 3px;
+}
+
+#chat {
+  border: solid black 1px;
+  height: 80vh;
+  width: 50vh;
+}
+
+#peers {
+  border: solid black 1px;
+  height: 80vh;
+  width: 20vh;
+  margin-left: 3px;
+}
+
+div.inline {
+  float: left;
+}
+
+#textarea {
+  border: solid black 1px;
+  height: 10vh;
+  width: 91vh;
+  margin-top: 2px;
 }

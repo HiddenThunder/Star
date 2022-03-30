@@ -1,41 +1,27 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import icon from '../../assets/logo.png';
 import './App.css';
 
 const Hello = () => {
   return (
-    <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
+    <>
+      <div id="channels" className="inline">
+        <ul>
+          <li>1ch</li>
+          <li>2ch</li>
+        </ul>
       </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
+      <div id="chat" className="inline">
+        <p>Hello</p>
       </div>
-    </div>
+      <div id="peers" className="inline">
+        <ul>
+          <li>1peer</li>
+          <li>2peer</li>
+        </ul>
+      </div>
+      <input id="textarea" />
+    </>
   );
 };
 

@@ -4,8 +4,8 @@
   "description": "A foundation for scalable desktop apps",
   "main": "./dist/main/main.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
+    "name": "Point",
+    "email": "poolsar.42@gmail.com",
     "url": "https://github.com/electron-react-boilerplate"
   },
   "scripts": {
