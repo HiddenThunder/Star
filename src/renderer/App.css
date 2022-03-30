@@ -67,7 +67,7 @@ a:hover {
   border: solid black 1px;
   height: 80vh;
   width: 50vh;
-  /* display: flex; */
+  font-size: 11px;
 }
 
 #peers {
@@ -84,7 +84,7 @@ div.inline {
 #textarea {
   border: solid black 1px;
   height: 10vh;
-  width: 91vh;
+  width: 81vh;
   margin-top: 2px;
 }
 
@@ -92,6 +92,19 @@ div.inline {
   text-align: center;
 }
 
+#send-message {
+  border: solid black 1px;
+  height: 10vh;
+  width: 10vh;
+  margin-top: 2px;
+}
+
 .icon {
   max-height: 30px;
+}
+
+ul.no-bullets {
+  list-style-type: none; /* Remove bullets */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margins */
 }

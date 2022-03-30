@@ -16,13 +16,3 @@ export const deleteMessage = (messageId: any) => {
     messageId,
   };
 };
-
-// export const sendMessage = (message: any) => {
-//   return sendMessageInternal(message);
-// };
-
-// export const deleteMessage = (messageId: any) => {
-//   return (dispatch: any) => {
-//     deleteMessageInternal(messageId);
-//   };
-// };

@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state/actionCreators';
 
+const { ipc } = window.electron;
+
 const Text = () => {
   const [localText, setLocalText] = useState('');
 
@@ -17,14 +19,22 @@ const Text = () => {
   const handleChangeText = (event: any) => {
     setLocalText(event.target.value);
   };
-  const handleSendMessage = (event: any) => {
+  const handleSendMessage = async (event: any) => {
+    const result = await ipc.sendSync('publish_message', localText);
+    if (result === -1) {
+      throw new Error('something went wrong. try again');
+    }
+
+    //* Two messages just to keep them on screen (in two lines)
+    sendMessage(`${result}:`);
     sendMessage(localText);
+    setLocalText('');
   };
 
   return (
     <>
       <input id="textarea" value={localText} onChange={handleChangeText} />
-      <button type="button" onClick={handleSendMessage}>
+      <button id="send-message" type="button" onClick={handleSendMessage}>
         Send
       </button>
     </>

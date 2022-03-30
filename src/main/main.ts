@@ -23,7 +23,6 @@ import LOBBY, {
   unsubscribe,
   publish,
 } from './network/pubsub';
-import genSharedSecret from './crypto';
 
 export default class AppUpdater {
   constructor() {
@@ -35,6 +34,7 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let node: any;
+let pubKey: string;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -84,7 +84,7 @@ const createWindow = async () => {
   node = await startNode();
   await subscribe(node, LOBBY, echo);
   const me = await node.id();
-  const pubKey = me.publicKey;
+  pubKey = me.publicKey;
   await subscribe(node, pubKey, echo);
   await publish(node, LOBBY, `My public key: ${pubKey}`);
   await publish(node, pubKey, `I'm subscribed to myself`);
@@ -134,6 +134,20 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
+/**
+ * IPC
+ */
+
+ipcMain.on('publish_message', async (event, message) => {
+  try {
+    await publish(node, LOBBY, message);
+    event.returnValue = pubKey;
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
+  }
+});
 
 /**
  * Add event listeners...

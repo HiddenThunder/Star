@@ -3,13 +3,19 @@ import { useSelector } from 'react-redux';
 const Chat = () => {
   const messages = useSelector((state) => state.chat);
 
+  // const now = () => +new Date();
+
   return (
     <div id="chat" className="inline">
-      <ul>
-        {messages.map((message: any, key: any) => {
-          return <li key={key}>{message}</li>;
+      <div className="messages-container">
+        {messages.map((message: any, index: any) => {
+          return (
+            <div className="no-bullets" key={index}>
+              {message}
+            </div>
+          );
         })}
-      </ul>
+      </div>
     </div>
   );
 };
