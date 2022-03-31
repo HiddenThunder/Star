@@ -1,5 +1,8 @@
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import appReducer from './redux';
+
+const { ipc } = window.electron;
 
 /** I wrap the entire redux store in a root reducer with a special
  * action, RESET_STORE. It calls application's reducer with
@@ -19,4 +22,7 @@ const rootReducer = (state: any, action: any) => {
   return appReducer(state, action);
 };
 
-export default createStore(rootReducer, {});
+export default createStore(
+  rootReducer,
+  applyMiddleware(thunkMiddleware.withExtraArgument(ipc))
+);

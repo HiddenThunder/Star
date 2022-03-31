@@ -36,12 +36,6 @@ let mainWindow: BrowserWindow | null = null;
 let node: any;
 let pubKey: string;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -138,9 +132,9 @@ const createWindow = async () => {
  * IPC
  */
 
-ipcMain.on('publish_message', async (event, message) => {
+ipcMain.on('publish_message', async (event, channel, message) => {
   try {
-    await publish(node, LOBBY, message);
+    await publish(node, channel, message);
     event.returnValue = pubKey;
   } catch (err) {
     event.returnValue = -1;

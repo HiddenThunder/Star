@@ -3,8 +3,6 @@ import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state/actionCreators';
 
-const { ipc } = window.electron;
-
 const Text = () => {
   const [localText, setLocalText] = useState('');
 
@@ -20,14 +18,14 @@ const Text = () => {
     setLocalText(event.target.value);
   };
   const handleSendMessage = async (event: any) => {
-    const result = await ipc.sendSync('publish_message', localText);
-    if (result === -1) {
-      throw new Error('something went wrong. try again');
-    }
+    // const result = await ipc.sendSync('publish_message', 'lobby', localText);
+    // if (result === -1) {
+    //   throw new Error('something went wrong. try again');
+    // }
 
     //* Two messages just to keep them on screen (in two lines)
-    sendMessage(`${result}:`);
-    sendMessage(localText);
+    // sendMessage(`${result}:`);
+    sendMessage('lobby', localText);
     setLocalText('');
   };
 
