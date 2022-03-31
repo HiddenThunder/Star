@@ -7,15 +7,16 @@ const Chat = () => {
 
   return (
     <div id="chat" className="inline">
-      <div className="messages-container">
+      <h3 className="header">Messages</h3>
+      <ul className="no-bullets">
         {messages.map((message: any, index: any) => {
           return (
-            <div className="no-bullets" key={index}>
+            <li className="item" key={index}>
               {message}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 };

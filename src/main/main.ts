@@ -135,7 +135,27 @@ const createWindow = async () => {
 ipcMain.on('publish_message', async (event, channel, message) => {
   try {
     await publish(node, channel, message);
-    event.returnValue = pubKey;
+    event.returnValue = (await node.id()).id;
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
+  }
+});
+
+ipcMain.on('get_channels_list', async (event) => {
+  try {
+    event.returnValue = await list(node);
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
+  }
+});
+
+ipcMain.on('get_peers_list', async (event, channel: string) => {
+  try {
+    event.returnValue = await peers(node, channel);
   } catch (err) {
     event.returnValue = -1;
     console.log(err);

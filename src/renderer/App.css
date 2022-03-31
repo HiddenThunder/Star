@@ -102,9 +102,22 @@ div.inline {
 .icon {
   max-height: 30px;
 }
+ul {
+  overflow: auto;
+}
 
 ul.no-bullets {
   list-style-type: none; /* Remove bullets */
   padding: 0; /* Remove padding */
   margin: 0; /* Remove margins */
+}
+
+h3.header {
+  font-size: medium;
+  text-align: center;
+  border: 1px black solid;
+}
+
+.item {
+  border-bottom: 1px rgb(200, 235, 226) solid;
 }

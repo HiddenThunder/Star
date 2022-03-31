@@ -18,13 +18,6 @@ const Text = () => {
     setLocalText(event.target.value);
   };
   const handleSendMessage = async (event: any) => {
-    // const result = await ipc.sendSync('publish_message', 'lobby', localText);
-    // if (result === -1) {
-    //   throw new Error('something went wrong. try again');
-    // }
-
-    //* Two messages just to keep them on screen (in two lines)
-    // sendMessage(`${result}:`);
     sendMessage('lobby', localText);
     setLocalText('');
   };

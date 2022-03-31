@@ -1,9 +1,32 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { useEffect } from 'react';
+import { actionCreators } from '../state/actionCreators';
+
 const Channels = () => {
+  const channels = useSelector((state) => state.channels);
+
+  const dispatch = useDispatch();
+  const { setChannels, deleteChannel } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
+
+  useEffect(() => {
+    setChannels();
+  }, []);
+
   return (
     <div id="channels" className="inline">
-      <ul>
-        <li>1ch</li>
-        <li>2ch</li>
+      <h3 className="header">Channels</h3>
+      <ul className="no-bullets">
+        {channels.map((channel: any, index: any) => {
+          return (
+            <li className="item" key={index}>
+              {index}: {channel}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

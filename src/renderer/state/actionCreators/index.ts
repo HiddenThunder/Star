@@ -1,1 +1,1 @@
-export * as actionCreators from './chat';
+export * as actionCreators from './actions';
