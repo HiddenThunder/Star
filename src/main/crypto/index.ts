@@ -6,14 +6,12 @@ export const privateKey = () => {
   );
 };
 
-export const encryptMsg = (message: string, privKey: PrivateKey) => {
+export const encryptMsg = (privKey: string, message: string) => {
   const data = Buffer.from(message);
-  return encrypt(
-    '024dc4941523c2a0af57528d18a86c35ad24d3e5966788e1807ffd83391a5f6668',
-    data
-  );
+  const publicKey = PrivateKey.fromHex(privKey).publicKey.toHex();
+  return encrypt(publicKey, data);
 };
 
-export const decryptMsg = (cipher: any, privKey: PrivateKey) => {
-  return decrypt(privKey.toHex(), cipher).toString();
+export const decryptMsg = (cipher: any, privKey: string) => {
+  return decrypt(privKey, cipher).toString();
 };
