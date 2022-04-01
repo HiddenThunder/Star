@@ -23,7 +23,7 @@ const Channels = () => {
         {channels.map((channel: any, index: any) => {
           return (
             <li className="item" key={index}>
-              {index}: {channel}
+              {channel}
             </li>
           );
         })}

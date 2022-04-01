@@ -17,8 +17,12 @@ const Peers = () => {
     <div id="peers" className="inline">
       <h3 className="header">Peers</h3>
       <ul className="no-bullets">
-        {peers.map((peer) => {
-          return <li className="item">peer</li>;
+        {peers.map((peer: string, index: any) => {
+          return (
+            <li className="item" key={index}>
+              peer
+            </li>
+          );
         })}
       </ul>
     </div>
