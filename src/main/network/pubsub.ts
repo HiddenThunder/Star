@@ -1,13 +1,7 @@
 //* PUBSUB REGULAR STUFF
-
 type Callback = (a: any) => void;
 
 const LOBBY = 'lobby';
-
-export const echo = async (msg: any) => {
-  const message = new TextDecoder().decode(msg.data);
-  console.log(message);
-};
 
 //* BASICS | STARTER
 
@@ -41,9 +35,13 @@ export const list = (node: any) => {
   }
 };
 
-export const unsubscribe = async (node: any, topic: string) => {
+export const unsubscribe = async (
+  node: any,
+  topic: string,
+  callback: Callback
+) => {
   try {
-    await node.pubsub.unsubscribe(topic, echo);
+    await node.pubsub.unsubscribe(topic, callback);
   } catch (err) {
     console.log('From pubsub unsibscribe', err);
   }

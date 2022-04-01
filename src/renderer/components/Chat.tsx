@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 const Chat = () => {
   const messages = useSelector((state) => state.chat);
 
-  // const now = () => +new Date();
-
   return (
     <div id="chat" className="inline">
       <h3 className="header">Messages</h3>

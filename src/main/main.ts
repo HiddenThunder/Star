@@ -16,7 +16,6 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { startNode, stopNode } from './network';
 import LOBBY, {
-  echo,
   subscribe,
   peers,
   list,
@@ -74,16 +73,6 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  //* IPFS STUFF BEGIN********* ------------------- //
-  node = await startNode();
-  await subscribe(node, LOBBY, echo);
-  const me = await node.id();
-  pubKey = me.publicKey;
-  await subscribe(node, pubKey, echo);
-  await publish(node, LOBBY, `My public key: ${pubKey}`);
-  await publish(node, pubKey, `I'm subscribed to myself`);
-  //* IPFS STUFF END*********** ------------------- //
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
@@ -96,6 +85,23 @@ const createWindow = async () => {
       nodeIntegration: true,
     },
   });
+
+  const echo = async (msg: any) => {
+    const message = new TextDecoder().decode(msg.data);
+    const { id } = await node.id();
+    mainWindow?.webContents.send('send_message', id, message);
+    console.log(message);
+  };
+
+  //* IPFS STUFF BEGIN********* ------------------- //
+  node = await startNode();
+  await subscribe(node, LOBBY, echo);
+  const me = await node.id();
+  pubKey = me.publicKey;
+  await subscribe(node, pubKey, echo);
+  await publish(node, LOBBY, `joined channel`);
+  await publish(node, pubKey, `I'm subscribed to myself`);
+  //* IPFS STUFF END*********** ------------------- //
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -128,6 +134,7 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
+
 /**
  * IPC
  */
@@ -135,7 +142,7 @@ const createWindow = async () => {
 ipcMain.on('publish_message', async (event, channel, message) => {
   try {
     await publish(node, channel, message);
-    event.returnValue = (await node.id()).id;
+    event.returnValue = 'All good';
   } catch (err) {
     event.returnValue = -1;
     console.log(err);
