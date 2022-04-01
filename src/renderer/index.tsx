@@ -8,7 +8,6 @@ import App from './App';
  * to properly handle state change in
  * UI components
  */
-
 const { store } = window.electron;
 
 render(

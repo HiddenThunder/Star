@@ -14,11 +14,10 @@
     "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
   "dependencies": {
-    "ipfsd-ctl": "^10.0.6",
     "go-ipfs": "^0.12.1",
     "ipfs": "0.62.1",
-    "ipfs-http-client": "^56.0.1"
-
+    "ipfs-http-client": "^56.0.1",
+    "ipfsd-ctl": "^10.0.6"
   },
   "license": "MIT"
 }
