@@ -1,3 +1,8 @@
+const { privateKey, decryptMsg, encryptMsg } = require('../crypto');
+
+const PrivateKey =
+  '0x2a1d5d208b3d551e8662bcf4bd12e66ab4e025ec8ef6e18cbc40c1594794652f';
+
 //* PUBSUB REGULAR STUFF
 type Callback = (a: any) => void;
 
@@ -49,7 +54,10 @@ export const unsubscribe = async (
 
 export const publish = async (node: any, topic: string, msg: string) => {
   try {
-    await node.pubsub.publish(topic, msg);
+    const { id } = await node.id();
+    const encrypted = encryptMsg(PrivateKey, `${id}: ${msg}`);
+    await node.pubsub.publish(topic, encrypted.toString('hex'));
+    console.log(decryptMsg(encrypted, PrivateKey));
   } catch (err) {
     console.log('Error from publshing', err);
   }
