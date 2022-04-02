@@ -9,8 +9,14 @@ import './App.css';
 const Hello = () => {
   return (
     <>
-      <div id="icon">
-        <img src={icon} alt="ipfs logo" className="icon" />
+      <div id="top">
+        <span id="icon">
+          <img src={icon} alt="ipfs logo" className="icon" />
+        </span>
+
+        <button id="key" type="button">
+          Set key
+        </button>
       </div>
 
       <Channels />

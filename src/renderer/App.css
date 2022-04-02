@@ -96,6 +96,17 @@ div.inline {
   text-align: center;
 }
 
+#top {
+  border: solid black 1px;
+  width: 91vh;
+  display: flex;
+  justify-content: space-between;
+}
+
+#key {
+  align-items: center;
+}
+
 #send-message {
   border: solid black 1px;
   height: 10vh;
