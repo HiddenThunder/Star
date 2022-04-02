@@ -61,7 +61,6 @@ a:hover {
   height: 80vh;
   width: 20vh;
   margin-right: 3px;
-  font-size: 11px;
   overflow: auto;
 }
 
@@ -69,7 +68,6 @@ a:hover {
   border: solid black 1px;
   height: 80vh;
   width: 50vh;
-  font-size: 11px;
   overflow: auto;
 }
 
@@ -78,7 +76,6 @@ a:hover {
   height: 80vh;
   width: 20vh;
   margin-left: 3px;
-  font-size: 11px;
 }
 
 div.inline {
@@ -122,6 +119,10 @@ ul.no-bullets {
   list-style-type: none; /* Remove bullets */
   padding: 0; /* Remove padding */
   margin: 0; /* Remove margins */
+  overflow-wrap: break-word;
+}
+
+.overflow {
   overflow-wrap: break-word;
 }
 

@@ -87,9 +87,7 @@ const createWindow = async () => {
 
   const echo = async (msg: any) => {
     const message = new TextDecoder().decode(msg.data);
-    const { id } = await node.id();
-    mainWindow?.webContents.send('send_message', id, message);
-    console.log(message);
+    mainWindow?.webContents.send('send_message', message);
   };
 
   //* IPFS STUFF BEGIN********* ------------------- //

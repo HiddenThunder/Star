@@ -3,7 +3,6 @@ import os from 'os';
 import log from 'electron-log';
 import Ctl from 'ipfsd-ctl';
 import * as ipfsHttpModule from 'ipfs-http-client';
-import * as goIpfs from 'go-ipfs';
 
 const port = 43134;
 
