@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { decryptMsg, privateKey } from './crypto';
 import { startNode, stopNode } from './network';
 import LOBBY, {
   subscribe,
@@ -86,8 +87,25 @@ const createWindow = async () => {
   });
 
   const echo = async (msg: any) => {
+    mainWindow?.webContents.send('get_key');
     const message = new TextDecoder().decode(msg.data);
-    mainWindow?.webContents.send('send_message', message);
+    //* once here, not on
+    ipcMain.once('send_key', (event, key) => {
+      if (key) {
+        try {
+          mainWindow?.webContents.send(
+            'send_message',
+            decryptMsg(message, key),
+            true
+          );
+        } catch (err) {
+          console.log(err);
+          mainWindow?.webContents.send('send_message', message, false);
+        }
+      } else {
+        mainWindow?.webContents.send('send_message', message, false);
+      }
+    });
   };
 
   //* IPFS STUFF BEGIN********* ------------------- //
@@ -136,7 +154,7 @@ const createWindow = async () => {
  * IPC
  */
 
-ipcMain.on('publish_message', async (event, channel, message) => {
+ipcMain.on('publish_message', async (event, channel, message, key: null) => {
   try {
     await publish(node, channel, message);
     event.returnValue = 'All good';

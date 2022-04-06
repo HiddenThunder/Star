@@ -1,5 +1,3 @@
-// const { ipc } = window.electron;
-
 const SET_KEY = 'SET_KEY';
 const RESET_KEY = 'RESET_KEY';
 

@@ -3,6 +3,8 @@ const { privateKey, decryptMsg, encryptMsg } = require('../crypto');
 const PrivateKey =
   '0x2a1d5d208b3d551e8662bcf4bd12e66ab4e025ec8ef6e18cbc40c1594794652f';
 
+console.log('Private key:', PrivateKey);
+
 //* PUBSUB REGULAR STUFF
 type Callback = (a: any) => void;
 

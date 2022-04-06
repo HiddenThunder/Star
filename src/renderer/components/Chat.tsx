@@ -10,7 +10,7 @@ const Chat = () => {
         {messages.map((message: any, index: any) => {
           return (
             <li className="item" key={index}>
-              {message}
+              {message.content}
             </li>
           );
         })}

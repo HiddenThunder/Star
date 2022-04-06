@@ -1,6 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const store = require('../renderer/state');
-const { decryptMsg, privateKey } = require('./crypto');
 const { sendMessage } = require('../renderer/state/actionCreators/chat');
 
 /** Private Key:
@@ -14,17 +13,13 @@ contextBridge.exposeInMainWorld('electron', {
   store,
 });
 
-ipcRenderer.on('send_message', (event: any, msg: string) => {
-  if (store.default.getState().key) {
-    try {
-      store.default.dispatch(
-        sendMessage(decryptMsg(msg, store.default.getState().key).toString())
-      );
-    } catch (err) {
-      console.log(err);
-      store.default.dispatch(sendMessage(msg));
-    }
-  } else {
-    store.default.dispatch(sendMessage(msg));
+ipcRenderer.on(
+  'send_message',
+  (event: any, msg: string, decrypted: boolean) => {
+    store.default.dispatch(sendMessage({ content: msg, decrypted }));
   }
+);
+
+ipcRenderer.on('get_key', (event: any) => {
+  event.sender.send('send_key', store.default.getState().key);
 });

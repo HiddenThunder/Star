@@ -1,5 +1,3 @@
-const { ipc } = window.electron;
-
 const SET_PEERS = 'SET_PEERS';
 
 // ACTION CREATORS
@@ -13,7 +11,7 @@ export const setPeersInternal = (peers: any) => {
 
 // THUNK MIDDLEWARE
 
-export const setPeers = (channel: string) => {
+export const setPeers = (channel: string, ipc: any) => {
   return async (dispatch: any) => {
     try {
       const peers = await ipc.sendSync('get_peers_list', channel);

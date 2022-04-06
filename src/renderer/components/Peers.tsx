@@ -3,6 +3,8 @@ import { bindActionCreators } from 'redux';
 import { useEffect } from 'react';
 import { actionCreators } from '../state/actionCreators';
 
+const { ipc } = window.electron;
+
 const Peers = () => {
   const peers = useSelector((state) => state.peers);
 
@@ -10,7 +12,7 @@ const Peers = () => {
   const { setPeers } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
-    setPeers();
+    setPeers('lobby', ipc);
   }, []);
 
   return (

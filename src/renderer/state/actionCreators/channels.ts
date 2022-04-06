@@ -1,5 +1,3 @@
-const { ipc } = window.electron;
-
 const SET_CHANNELS = 'SET_CHANNELS';
 const DELETE_CHANNEL = 'DELETE_CHANNEL';
 
@@ -21,7 +19,7 @@ export const deleteChannel = (channelId: any) => {
 
 // THUNK MIDDLEWARE
 
-export const setChannels = () => {
+export const setChannels = (ipc: any) => {
   return async (dispatch: any) => {
     try {
       const channels = await ipc.sendSync('get_channels_list');

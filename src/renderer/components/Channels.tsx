@@ -3,6 +3,8 @@ import { bindActionCreators } from 'redux';
 import { useEffect } from 'react';
 import { actionCreators } from '../state/actionCreators';
 
+const { ipc } = window.electron;
+
 const Channels = () => {
   const channels = useSelector((state) => state.channels);
 
@@ -13,7 +15,7 @@ const Channels = () => {
   );
 
   useEffect(() => {
-    setChannels();
+    setChannels(ipc);
   }, []);
 
   return (
