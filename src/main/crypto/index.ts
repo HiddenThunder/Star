@@ -2,6 +2,7 @@ import { encrypt, decrypt, PrivateKey } from 'eciesjs';
 
 //* ENCODING IS IMPORTANT
 /*  USE HEX HERE EVERYWHERE WHERE POSSIBLE
+/*  https://stackoverflow.com/questions/21647928/javascript-unicode-string-to-hex
  */
 
 String.prototype.hexEncode = function () {

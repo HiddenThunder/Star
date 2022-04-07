@@ -58,7 +58,8 @@ export const publish = async (node: any, topic: string, msg: string) => {
   try {
     const { id } = await node.id();
     const encrypted = encryptMsg(PrivateKey, `${id}: ${msg}`);
-    await node.pubsub.publish(topic, encrypted.toString('hex'));
+    const message = new TextEncoder().encode(encrypted.toString('hex'));;
+    await node.pubsub.publish(topic, message);
     console.log(decryptMsg(encrypted, PrivateKey));
   } catch (err) {
     console.log('Error from publshing', err);

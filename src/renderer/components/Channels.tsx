@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useEffect } from 'react';
 import { actionCreators } from '../state/actionCreators';
+import { setChannel } from 'renderer/state/actionCreators/channel';
 
 const { ipc } = window.electron;
 
@@ -9,13 +10,14 @@ const Channels = () => {
   const channels = useSelector((state) => state.channels);
 
   const dispatch = useDispatch();
-  const { setChannels, deleteChannel } = bindActionCreators(
+  const { setChannels, deleteChannel, setChannel } = bindActionCreators(
     actionCreators,
     dispatch
   );
 
   useEffect(() => {
     setChannels(ipc);
+    setChannel('lobby');
   }, []);
 
   return (

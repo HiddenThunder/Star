@@ -2,15 +2,13 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state/actionCreators';
+import { useSelector } from 'react-redux';
 
 const { ipc } = window.electron;
 
-ipc.on('send_message', (event: any, msg: string) => {
-  console.log('what', msg);
-});
-
 const Text = () => {
   const [localText, setLocalText] = useState('');
+  const channel = useSelector((state) => state.channel);
 
   //* REDUX STUFF
   const dispatch = useDispatch();
