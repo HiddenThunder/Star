@@ -9,7 +9,7 @@ const Chat = () => {
       <h3 className="header">Messages</h3>
       <ul className="no-bullets">
         {messages
-          .filter((message: any) => message.channel == channel)
+          .filter((message: any) => message.channel == channel.topic)
           .map((message: any, index: any) => {
             return (
               <li className="item" key={index}>

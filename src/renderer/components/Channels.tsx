@@ -18,13 +18,15 @@ const Channels = () => {
     setChannels(ipc);
   }, []);
 
-  const changeChannel = (channel: string) => {
+  const changeChannel = (channel: any) => {
     setChannel(channel);
   };
 
   return (
     <div id="channels" className="inline">
-      <h3 className="header">Channels</h3>
+      <div className="header">
+        <h3 className="header">Channels</h3>
+      </div>
       <ul className="no-bullets">
         {channels.map((channel: string, index: any) => {
           return (
@@ -34,7 +36,7 @@ const Channels = () => {
               channel={channel}
               onClick={() => changeChannel(channel)}
             >
-              {channel}
+              {channel.topic}
             </li>
           );
         })}

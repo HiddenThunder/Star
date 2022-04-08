@@ -94,8 +94,8 @@ const createWindow = async () => {
     ipcMain.once('send_key', (event, key) => {
       if (key) {
         try {
-          const decryptedMsg = decryptMsg(message.content, key);
           message = JSON.parse(message);
+          const decryptedMsg = decryptMsg(message.content, key);
           message.content = decryptedMsg;
           message.decrypted = true;
           message = JSON.stringify(message);

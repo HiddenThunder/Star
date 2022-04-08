@@ -15,11 +15,9 @@ contextBridge.exposeInMainWorld('electron', {
 
 ipcRenderer.on('send_message', (event: any, msg: any) => {
   const message = JSON.parse(msg);
-  console.log(message);
-  console.log(store.default.getState());
   store.default.dispatch(sendMessage(message));
 });
 
 ipcRenderer.on('get_key', (event: any) => {
-  event.sender.send('send_key', store.default.getState().key);
+  event.sender.send('send_key', store.default.getState().channel.key);
 });

@@ -30,14 +30,17 @@ const Hello = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('');
 
-  const key: string | null = useSelector((state) => state.key);
-  const channel: string | null = useSelector((state) => state.channel);
+  const key: string | null = useSelector((state) => state.channel.key);
+  const channel = useSelector((state) => state.channel);
 
   const dispatch = useDispatch();
-  const { setKey, setChannel } = bindActionCreators(actionCreators, dispatch);
+  const { setChannel, setChannelKey } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
 
   useEffect(() => {
-    setChannel('lobby');
+    setChannel({ topic: 'lobby', key: null });
   }, []);
 
   function openModal() {
@@ -62,7 +65,20 @@ const Hello = () => {
         <form>
           <input value={value} onChange={(evt) => setValue(evt.target.value)} />
 
-          <button type="button" onClick={() => setKey(value)}>
+          <button
+            type="button"
+            onClick={() => {
+              setChannelKey(
+                {
+                  topic: channel.topic,
+                  key: value,
+                },
+                channel.topic
+              );
+              setChannel({ topic: channel.topic, key: value });
+              setValue('');
+            }}
+          >
             set
           </button>
           <button type="button" onClick={closeModal}>
