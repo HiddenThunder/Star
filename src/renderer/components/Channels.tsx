@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useEffect } from 'react';
 import { actionCreators } from '../state/actionCreators';
-import { setChannel } from 'renderer/state/actionCreators/channel';
 
 const { ipc } = window.electron;
 
@@ -10,7 +9,7 @@ const Channels = () => {
   const channels = useSelector((state) => state.channels);
 
   const dispatch = useDispatch();
-  const { setChannels, deleteChannel } = bindActionCreators(
+  const { setChannels, deleteChannel, setChannel } = bindActionCreators(
     actionCreators,
     dispatch
   );
@@ -19,13 +18,22 @@ const Channels = () => {
     setChannels(ipc);
   }, []);
 
+  const changeChannel = (channel: string) => {
+    setChannel(channel);
+  };
+
   return (
     <div id="channels" className="inline">
       <h3 className="header">Channels</h3>
       <ul className="no-bullets">
-        {channels.map((channel: any, index: any) => {
+        {channels.map((channel: string, index: any) => {
           return (
-            <li className="item" key={index}>
+            <li
+              className="item"
+              key={index}
+              channel={channel}
+              onClick={() => changeChannel(channel)}
+            >
               {channel}
             </li>
           );

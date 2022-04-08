@@ -3,7 +3,7 @@
 const SET_CHANNEL = 'SET_CHANNEL';
 
 // REDUCER
-export default function channelReducer(channel: any = '', action: any) {
+export default function channelReducer(channel = '', action: any) {
   switch (action.type) {
     case SET_CHANNEL:
       return action.channel;

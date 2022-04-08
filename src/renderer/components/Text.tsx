@@ -23,7 +23,7 @@ const Text = () => {
 
   const handleSendMessage = async (event: any) => {
     try {
-      const result = await ipc.sendSync('publish_message', 'lobby', localText);
+      const result = await ipc.sendSync('publish_message', channel, localText);
       if (result == -1) {
         throw new Error('Something went wrong. Please try again later');
       }
