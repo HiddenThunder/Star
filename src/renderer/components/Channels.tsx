@@ -10,14 +10,13 @@ const Channels = () => {
   const channels = useSelector((state) => state.channels);
 
   const dispatch = useDispatch();
-  const { setChannels, deleteChannel, setChannel } = bindActionCreators(
+  const { setChannels, deleteChannel } = bindActionCreators(
     actionCreators,
     dispatch
   );
 
   useEffect(() => {
     setChannels(ipc);
-    setChannel('lobby');
   }, []);
 
   return (

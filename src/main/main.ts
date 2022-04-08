@@ -88,22 +88,24 @@ const createWindow = async () => {
 
   const echo = async (msg: any) => {
     mainWindow?.webContents.send('get_key');
-    const message = new TextDecoder().decode(msg.data);
+    let message = new TextDecoder().decode(msg.data);
     //* once here, not on
+    //* https://stackoverflow.com/questions/47597982/send-sync-message-from-ipcmain-to-ipcrenderer-electron
     ipcMain.once('send_key', (event, key) => {
       if (key) {
         try {
-          mainWindow?.webContents.send(
-            'send_message',
-            decryptMsg(message, key),
-            true
-          );
+          const decryptedMsg = decryptMsg(message.content, key);
+          message = JSON.parse(message);
+          message.content = decryptedMsg;
+          message.decrypted = true;
+          message = JSON.stringify(message);
+          mainWindow?.webContents.send('send_message', message);
         } catch (err) {
           console.log(err);
-          mainWindow?.webContents.send('send_message', message, false);
+          mainWindow?.webContents.send('send_message', message);
         }
       } else {
-        mainWindow?.webContents.send('send_message', message, false);
+        mainWindow?.webContents.send('send_message', message);
       }
     });
   };

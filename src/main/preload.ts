@@ -13,8 +13,11 @@ contextBridge.exposeInMainWorld('electron', {
   store,
 });
 
-ipcRenderer.on('send_message', (event: any, msg: any, decrypted: boolean) => {
-  store.default.dispatch(sendMessage({ content: msg, decrypted }));
+ipcRenderer.on('send_message', (event: any, msg: any) => {
+  const message = JSON.parse(msg);
+  console.log(message);
+  console.log(store.default.getState());
+  store.default.dispatch(sendMessage(message));
 });
 
 ipcRenderer.on('get_key', (event: any) => {

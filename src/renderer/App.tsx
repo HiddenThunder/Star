@@ -1,5 +1,5 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal from 'react-modal';
@@ -31,9 +31,14 @@ const Hello = () => {
   const [value, setValue] = useState('');
 
   const key: string | null = useSelector((state) => state.key);
+  const channel: string | null = useSelector((state) => state.channel);
 
   const dispatch = useDispatch();
-  const { setKey } = bindActionCreators(actionCreators, dispatch);
+  const { setKey, setChannel } = bindActionCreators(actionCreators, dispatch);
+
+  useEffect(() => {
+    setChannel('lobby');
+  }, []);
 
   function openModal() {
     setIsOpen(true);
