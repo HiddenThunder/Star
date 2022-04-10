@@ -196,6 +196,23 @@ ipcMain.on('get_peers_list', async (event, channel: string) => {
   }
 });
 
+ipcMain.on('decrypt_messages', async (event, messages: string, key: string) => {
+  try {
+    const decryptedMessages = messages.map((message) => {
+      if (!message.decrypted) {
+        message.content = decryptMsg(message.content, key);
+        message.decrypted = true;
+      }
+      return message;
+    });
+    event.returnValue = decryptedMessages;
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
+  }
+});
+
 /**
  * Add event listeners...
  */

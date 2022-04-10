@@ -1,6 +1,7 @@
 const SEND_MESSAGE = 'SEND_MESSAGE';
 const DELETE_MESSAGE = 'DELETE_MESSAGE';
 const SUBSCRIBE_TO_TOPIC = 'SUBSCRIBE_TO_TOPIC';
+const DECRYPT_CHANNEL_HISTORY = 'DECRYPT_CHANNEL_HISTORY';
 
 // ACTION CREATORS
 
@@ -25,6 +26,14 @@ export const addChannel = (channel: string) => {
   };
 };
 
+const decryptHistoryInternal = (channel: string, chat: any) => {
+  return {
+    type: DECRYPT_CHANNEL_HISTORY,
+    channel,
+    chat,
+  };
+};
+
 // THUNK MIDDLEWARE
 
 // export const sendMessage = (channel: string, message: any) => {
@@ -40,3 +49,22 @@ export const addChannel = (channel: string) => {
 //     }
 //   };
 // };
+
+export const decryptHistory = (
+  ipc: any,
+  channel: string,
+  chat: any,
+  key: string
+) => {
+  return async (dispatch: any) => {
+    try {
+      const newChat = ipc.sendSync('decrypt_messages', chat, key);
+      if (newChat === -1) {
+        throw new Error('Something went wrong. Try again later');
+      }
+      return dispatch(decryptHistoryInternal(channel, newChat));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+};

@@ -4,7 +4,7 @@ const SET_CHANNEL_KEY = 'SET_CHANNEL_KEY';
 
 // ACTION CREATORS
 
-export const setChannelsInternal = (channels: any) => {
+const setChannelsInternal = (channels: any) => {
   return {
     type: SET_CHANNELS,
     channels,
