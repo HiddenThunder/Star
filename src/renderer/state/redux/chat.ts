@@ -8,10 +8,9 @@ const DELETE_MESSAGE = 'DELETE_MESSAGE';
 export default function chatReducer(chat: any = { lobby: [] }, action: any) {
   switch (action.type) {
     case SUBSCRIBE_TO_TOPIC:
-      return {
-        ...chat,
-        [action.channel]: [],
-      };
+      return Object.keys(chat).includes(action.channel)
+        ? chat
+        : { ...chat, [action.channel]: [] };
     case SEND_MESSAGE:
       return {
         ...chat,

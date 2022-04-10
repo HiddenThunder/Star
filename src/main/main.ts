@@ -171,7 +171,14 @@ ipcMain.on('publish_message', async (event, channel, message, key: null) => {
 
 ipcMain.on('get_channels_list', async (event) => {
   try {
-    event.returnValue = await list(node);
+    const topicsList = await list(node);
+
+    //* TEMPORARY SOLUTION TO CHANNELS UPDATE
+    topicsList.forEach((topic: string) => {
+      mainWindow?.webContents.send('subscribe_to_topic', topic);
+    });
+
+    event.returnValue = topicsList;
   } catch (err) {
     event.returnValue = -1;
     console.log(err);
