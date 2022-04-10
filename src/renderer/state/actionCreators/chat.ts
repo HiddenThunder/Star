@@ -1,5 +1,6 @@
 const SEND_MESSAGE = 'SEND_MESSAGE';
 const DELETE_MESSAGE = 'DELETE_MESSAGE';
+const SUBSCRIBE_TO_TOPIC = 'SUBSCRIBE_TO_TOPIC';
 
 // ACTION CREATORS
 
@@ -14,6 +15,13 @@ export const deleteMessage = (messageId: any) => {
   return {
     type: DELETE_MESSAGE,
     messageId,
+  };
+};
+
+export const addChannel = (channel: string) => {
+  return {
+    type: SUBSCRIBE_TO_TOPIC,
+    channel,
   };
 };
 

@@ -113,9 +113,11 @@ const createWindow = async () => {
   //* IPFS STUFF BEGIN********* ------------------- //
   node = await startNode();
   await subscribe(node, LOBBY, echo);
+  mainWindow?.webContents.send('subscribe_to_topic', LOBBY);
   const me = await node.id();
   pubKey = me.publicKey;
   await subscribe(node, pubKey, echo);
+  mainWindow?.webContents.send('subscribe_to_topic', pubKey);
   await publish(node, LOBBY, `joined channel`);
   await publish(node, pubKey, `I'm subscribed to myself`);
   //* IPFS STUFF END*********** ------------------- //

@@ -1,6 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const store = require('../renderer/state');
-const { sendMessage } = require('../renderer/state/actionCreators/chat');
+const {
+  sendMessage,
+  addChannel,
+} = require('../renderer/state/actionCreators/chat');
 
 /** Private Key:
 /*  0x2a1d5d208b3d551e8662bcf4bd12e66ab4e025ec8ef6e18cbc40c1594794652f
@@ -11,6 +14,10 @@ const { sendMessage } = require('../renderer/state/actionCreators/chat');
 contextBridge.exposeInMainWorld('electron', {
   ipc: { ...ipcRenderer, on: ipcRenderer.on, once: ipcRenderer.once },
   store,
+});
+
+ipcRenderer.on('subscribe_to_topic', (event: any, topic: string) => {
+  store.default.dispatch(addChannel(topic));
 });
 
 ipcRenderer.on('send_message', (event: any, msg: any) => {
