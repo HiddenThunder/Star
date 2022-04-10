@@ -54,15 +54,20 @@ export const unsubscribe = async (
   }
 };
 
-export const publish = async (node: any, topic: string, msg: string) => {
+export const publish = async (
+  node: any,
+  topic: string,
+  id: string,
+  msg: string
+) => {
   try {
-    const { id } = await node.id();
     const encrypted = encryptMsg(PrivateKey, `${id}: ${msg}`);
     const message = new TextEncoder().encode(
       JSON.stringify({
         content: encrypted.toString('hex'),
         channel: topic,
         decrypted: false,
+        sender: id,
       })
     );
     await node.pubsub.publish(topic, message);

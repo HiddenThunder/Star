@@ -35,6 +35,7 @@ export default class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let node: any;
 let pubKey: string;
+let id: string;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -115,11 +116,12 @@ const createWindow = async () => {
   await subscribe(node, LOBBY, echo);
   mainWindow?.webContents.send('subscribe_to_topic', LOBBY);
   const me = await node.id();
+  id = me.id;
   pubKey = me.publicKey;
   await subscribe(node, pubKey, echo);
   mainWindow?.webContents.send('subscribe_to_topic', pubKey);
-  await publish(node, LOBBY, `joined channel`);
-  await publish(node, pubKey, `I'm subscribed to myself`);
+  await publish(node, LOBBY, id, `joined channel`);
+  await publish(node, pubKey, id, `I'm subscribed to myself`);
   //* IPFS STUFF END*********** ------------------- //
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -160,7 +162,7 @@ const createWindow = async () => {
 
 ipcMain.on('publish_message', async (event, channel, message, key: null) => {
   try {
-    await publish(node, channel, message);
+    await publish(node, channel, id, message);
     event.returnValue = 'All good';
   } catch (err) {
     event.returnValue = -1;
