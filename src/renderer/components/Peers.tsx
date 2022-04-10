@@ -22,7 +22,7 @@ const Peers = () => {
         {peers.map((peer: string, index: any) => {
           return (
             <li className="item" key={index}>
-              peer
+              {peer}
             </li>
           );
         })}
