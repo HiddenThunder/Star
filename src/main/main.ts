@@ -130,7 +130,7 @@ const createWindow = async () => {
           await subscribe(node, channelId, echo);
           mainWindow?.webContents.send('subscribe_to_topic', channelId);
           const topics = await list(node);
-          mainWindow?.webContents.send('set_topics', topics);
+          mainWindow?.webContents.send('set_topics', JSON.stringify(topics));
           await publishToLocalId(node, id, id, channelId);
           //* IT'S NOT UNDEFINED
           console.log('RECEIVER', channelId);
@@ -154,7 +154,7 @@ const createWindow = async () => {
         mainWindow?.webContents.send('subscribe_to_topic', message.content);
         await unsubscribe(node, message.sender, () => {});
         const topics = await list(node);
-        mainWindow?.webContents.send('set_topics', topics);
+        mainWindow?.webContents.send('set_topics', JSON.stringify(topics));
       }
     } catch (err) {
       console.log(err);
