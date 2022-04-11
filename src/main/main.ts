@@ -130,7 +130,6 @@ const createWindow = async () => {
         log.warn(err);
       }
     } else {
-      console.log(message);
       mainWindow?.webContents.send('send_message', messageNotParsed);
     }
   };
@@ -197,8 +196,13 @@ ipcMain.on('connect_peers', async (event, peerId) => {
 
 ipcMain.on('publish_message', async (event, channel, message, key: null) => {
   try {
-    await publish(node, channel, id, message);
-    event.returnValue = 'All good';
+    if (channel !== id) {
+      await publish(node, channel, id, message);
+      event.returnValue = 'All good';
+    } else {
+      await publishToLocalId(node, channel, id, message);
+      event.returnValue = 'All good';
+    }
   } catch (err) {
     event.returnValue = -1;
     console.log(err);
