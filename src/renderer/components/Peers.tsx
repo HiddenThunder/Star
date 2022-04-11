@@ -15,13 +15,24 @@ const Peers = () => {
     setPeers('lobby', ipc);
   }, []);
 
+  const subscribeToPeer = (peerId: string) => {
+    const response = ipc.sendSync('connect_peers', peerId);
+    if (response === -1) {
+      throw new Error('Something went wrong. Try again later');
+    }
+  };
+
   return (
     <div id="peers" className="inline">
       <h3 className="header">Peers</h3>
       <ul className="no-bullets">
         {peers.map((peer: string, index: any) => {
           return (
-            <li className="item" key={index}>
+            <li
+              className="item"
+              key={index}
+              onClick={() => subscribeToPeer(peer)}
+            >
               {peer}
             </li>
           );

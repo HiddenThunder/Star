@@ -12,6 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { randomBytes } from 'crypto';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { decryptMsg, privateKey } from './crypto';
@@ -20,6 +21,7 @@ import LOBBY, {
   subscribe,
   peers,
   list,
+  publishToLocalId,
   unsubscribe,
   publish,
 } from './network/pubsub';
@@ -86,16 +88,17 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+  //* CALLBACK FUNCTIONS FOR PUBSUB
 
   const echo = async (msg: any) => {
     mainWindow?.webContents.send('get_key');
-    let message = new TextDecoder().decode(msg.data);
+    const messageNotParsed = new TextDecoder().decode(msg.data);
     //* once here, not on
     //* https://stackoverflow.com/questions/47597982/send-sync-message-from-ipcmain-to-ipcrenderer-electron
     ipcMain.once('send_key', (event, key) => {
       if (key) {
         try {
-          message = JSON.parse(message);
+          let message = JSON.parse(messageNotParsed);
           const decryptedMsg = decryptMsg(message.content, key);
           message.content = decryptedMsg;
           message.decrypted = true;
@@ -103,13 +106,36 @@ const createWindow = async () => {
           mainWindow?.webContents.send('send_message', message);
         } catch (err) {
           console.log(err);
-          mainWindow?.webContents.send('send_message', message);
+          mainWindow?.webContents.send('send_message', messageNotParsed);
         }
       } else {
-        mainWindow?.webContents.send('send_message', message);
+        mainWindow?.webContents.send('send_message', messageNotParsed);
       }
     });
   };
+
+  const peerConnecitonReceiver = async (msg: any) => {
+    const messageNotParsed = new TextDecoder().decode(msg.data);
+    const message = JSON.parse(messageNotParsed);
+    if (message.id) {
+      try {
+        let channelId: any;
+        randomBytes(48, function (crypto_err, buffer) {
+          channelId = buffer.toString('hex');
+        });
+
+        console.log(channelId);
+      } catch (err) {
+        console.log(err);
+        log.warn(err);
+      }
+    } else {
+      console.log(message);
+      mainWindow?.webContents.send('send_message', messageNotParsed);
+    }
+  };
+
+  const peerConnecitonSender = async (msg: any) => {};
 
   //* IPFS STUFF BEGIN********* ------------------- //
   node = await startNode();
@@ -117,11 +143,10 @@ const createWindow = async () => {
   mainWindow?.webContents.send('subscribe_to_topic', LOBBY);
   const me = await node.id();
   id = me.id;
-  pubKey = me.publicKey;
-  await subscribe(node, pubKey, echo);
-  mainWindow?.webContents.send('subscribe_to_topic', pubKey);
+  await subscribe(node, id, peerConnecitonReceiver);
+  mainWindow?.webContents.send('subscribe_to_topic', id);
   await publish(node, LOBBY, id, `joined channel`);
-  await publish(node, pubKey, id, `I'm subscribed to myself`);
+  await publishToLocalId(node, id, id, `I'm subscribed to myself`);
   //* IPFS STUFF END*********** ------------------- //
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -159,6 +184,16 @@ const createWindow = async () => {
 /**
  * IPC
  */
+
+ipcMain.on('connect_peers', async (event, peerId) => {
+  try {
+    await subscribe(node, peerId, () => {});
+    await publish(node, peerId, id, 'Message');
+  } catch (err) {
+    console.error(err);
+    event.returnValue = -1;
+  }
+});
 
 ipcMain.on('publish_message', async (event, channel, message, key: null) => {
   try {

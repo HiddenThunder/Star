@@ -77,4 +77,25 @@ export const publish = async (
   }
 };
 
+export const publishToLocalId = async (
+  node: any,
+  topic: string,
+  id: string,
+  msg: string
+) => {
+  try {
+    const message = new TextEncoder().encode(
+      JSON.stringify({
+        content: msg,
+        channel: topic,
+        decrypted: true,
+        sender: id,
+      })
+    );
+    await node.pubsub.publish(topic, message);
+  } catch (err) {
+    console.log('Error from publshing', err);
+  }
+};
+
 export default LOBBY;
