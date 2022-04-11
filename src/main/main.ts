@@ -149,10 +149,10 @@ const createWindow = async () => {
     const message = JSON.parse(messageNotParsed);
     try {
       if (message.sender !== id) {
-        console.log('SENDER', message.content);
+        console.log('SENDER', message.content, message.sender);
         await subscribe(node, message.content, echo);
         mainWindow?.webContents.send('subscribe_to_topic', message.content);
-        await unsubscribe(node, message.sender, () => {});
+        await unsubscribe(node, message.sender, echo);
         const topics = await list(node);
         mainWindow?.webContents.send('set_topics', JSON.stringify(topics));
       }
