@@ -128,12 +128,13 @@ const createWindow = async () => {
           channelId = buffer.toString('hex');
           //* TESTING
           await subscribe(node, channelId, echo);
-          mainWindow?.webContents.send('subscribe_to_topic', message.content);
-          mainWindow?.webContents.send('set_topics', await list(node));
+          mainWindow?.webContents.send('subscribe_to_topic', channelId);
+          const topics = await list(node);
+          mainWindow?.webContents.send('set_topics', topics);
           message.content = channelId;
           await publishToLocalId(node, id, id, message);
           //* IT'S NOT UNDEFINED
-          console.log(channelId);
+          console.log('RECEIVER', channelId);
         });
       } catch (err) {
         console.log(err);
@@ -149,10 +150,12 @@ const createWindow = async () => {
     const message = JSON.parse(messageNotParsed);
     try {
       if (message.sender !== id) {
+        console.log('SENDER', message.content);
         await subscribe(node, message.content, echo);
         mainWindow?.webContents.send('subscribe_to_topic', message.content);
         await unsubscribe(node, message.sender, () => {});
-        mainWindow?.webContents.send('set_topics', await list(node));
+        const topics = await list(node);
+        mainWindow?.webContents.send('set_topics', topics);
       }
     } catch (err) {
       console.log(err);
