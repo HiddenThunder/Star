@@ -131,8 +131,7 @@ const createWindow = async () => {
           mainWindow?.webContents.send('subscribe_to_topic', channelId);
           const topics = await list(node);
           mainWindow?.webContents.send('set_topics', topics);
-          message.content = channelId;
-          await publishToLocalId(node, id, id, message);
+          await publishToLocalId(node, id, id, channelId);
           //* IT'S NOT UNDEFINED
           console.log('RECEIVER', channelId);
         });
