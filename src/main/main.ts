@@ -154,6 +154,7 @@ const createWindow = async () => {
         mainWindow?.webContents.send('subscribe_to_topic', message.content);
         await unsubscribe(node, message.sender, echo);
         const topics = await list(node);
+        console.log(topics);
         mainWindow?.webContents.send('set_topics', JSON.stringify(topics));
       }
     } catch (err) {
