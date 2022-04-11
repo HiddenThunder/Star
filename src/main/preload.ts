@@ -4,6 +4,9 @@ const {
   sendMessage,
   addChannel,
 } = require('../renderer/state/actionCreators/chat');
+const {
+  setChannelsInternal,
+} = require('../renderer/state/actionCreators/channels');
 const { setPeersInternal } = require('../renderer/state/actionCreators/peers');
 
 /** Private Key:
@@ -15,6 +18,10 @@ const { setPeersInternal } = require('../renderer/state/actionCreators/peers');
 contextBridge.exposeInMainWorld('electron', {
   ipc: { ...ipcRenderer, on: ipcRenderer.on, once: ipcRenderer.once },
   store,
+});
+
+ipcRenderer.on('set_topics', (event: any, topics: any) => {
+  store.default.dispatch(setChannelsInternal(topics));
 });
 
 ipcRenderer.on('subscribe_to_topic', (event: any, topic: string) => {

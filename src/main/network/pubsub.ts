@@ -86,7 +86,7 @@ export const publishToLocalId = async (
   try {
     const message = new TextEncoder().encode(
       JSON.stringify({
-        content: `${id}: ${msg}`,
+        content: msg,
         channel: topic,
         decrypted: true,
         sender: id,

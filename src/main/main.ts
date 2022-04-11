@@ -38,6 +38,9 @@ let mainWindow: BrowserWindow | null = null;
 let node: any;
 let pubKey: string;
 let id: string;
+let peerConnecitonReceiver: any;
+let peerConnecitonSender: any;
+let echo: any;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -90,7 +93,7 @@ const createWindow = async () => {
   });
   //* CALLBACK FUNCTIONS FOR PUBSUB
 
-  const echo = async (msg: any) => {
+  echo = async (msg: any) => {
     mainWindow?.webContents.send('get_key');
     const messageNotParsed = new TextDecoder().decode(msg.data);
     //* once here, not on
@@ -114,17 +117,24 @@ const createWindow = async () => {
     });
   };
 
-  const peerConnecitonReceiver = async (msg: any) => {
+  peerConnecitonReceiver = async (msg: any) => {
     const messageNotParsed = new TextDecoder().decode(msg.data);
     const message = JSON.parse(messageNotParsed);
-    if (message.id) {
+
+    if (message.sender !== id) {
       try {
         let channelId: any;
-        randomBytes(48, function (crypto_err, buffer) {
+        randomBytes(48, async function (crypto_err, buffer) {
           channelId = buffer.toString('hex');
+          //* TESTING
+          await subscribe(node, channelId, echo);
+          mainWindow?.webContents.send('subscribe_to_topic', message.content);
+          mainWindow?.webContents.send('set_topics', await list(node));
+          message.content = channelId;
+          await publishToLocalId(node, id, id, message);
+          //* IT'S NOT UNDEFINED
+          console.log(channelId);
         });
-
-        console.log(channelId);
       } catch (err) {
         console.log(err);
         log.warn(err);
@@ -134,7 +144,21 @@ const createWindow = async () => {
     }
   };
 
-  const peerConnecitonSender = async (msg: any) => {};
+  peerConnecitonSender = async (msg: any) => {
+    const messageNotParsed = new TextDecoder().decode(msg.data);
+    const message = JSON.parse(messageNotParsed);
+    try {
+      if (message.sender !== id) {
+        await subscribe(node, message.content, echo);
+        mainWindow?.webContents.send('subscribe_to_topic', message.content);
+        await unsubscribe(node, message.sender, () => {});
+        mainWindow?.webContents.send('set_topics', await list(node));
+      }
+    } catch (err) {
+      console.log(err);
+      log.warn(err);
+    }
+  };
 
   //* IPFS STUFF BEGIN********* ------------------- //
   node = await startNode();
@@ -186,8 +210,8 @@ const createWindow = async () => {
 
 ipcMain.on('connect_peers', async (event, peerId) => {
   try {
-    await subscribe(node, peerId, () => {});
-    await publish(node, peerId, id, 'Message');
+    await subscribe(node, peerId, peerConnecitonSender);
+    await publishToLocalId(node, peerId, id, 'Message');
   } catch (err) {
     console.error(err);
     event.returnValue = -1;
@@ -237,9 +261,9 @@ ipcMain.on('get_peers_list', async (event, channel: string) => {
   }
 });
 
-ipcMain.on('decrypt_messages', async (event, messages: string, key: string) => {
+ipcMain.on('decrypt_messages', async (event, messages: any, key: string) => {
   try {
-    const decryptedMessages = messages.map((message) => {
+    const decryptedMessages = messages.map((message: any) => {
       if (!message.decrypted) {
         message.content = decryptMsg(message.content, key);
         message.decrypted = true;
