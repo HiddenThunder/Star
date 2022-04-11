@@ -20,8 +20,10 @@ contextBridge.exposeInMainWorld('electron', {
   store,
 });
 
-ipcRenderer.on('set_topics', (event: any, topics: any) => {
-  store.default.dispatch(setChannelsInternal(topics));
+ipcRenderer.on('set_topics', (event: any, topics: string) => {
+  const channels = JSON.parse(topics);
+  console.log(channels);
+  store.default.dispatch(setChannelsInternal(channels));
 });
 
 ipcRenderer.on('subscribe_to_topic', (event: any, topic: string) => {
