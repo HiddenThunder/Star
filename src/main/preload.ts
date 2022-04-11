@@ -23,9 +23,17 @@ contextBridge.exposeInMainWorld('electron', {
 ipcRenderer.on('set_topics', (event: any, topics: string) => {
   let channels = JSON.parse(topics);
   channels = channels.map((channel: string) => {
+    const key = store.default
+      .getState()
+      .channels.reduce((acc: any, val: any) => {
+        if (val.topic === channel) {
+          acc.push(val.key);
+        }
+        return acc;
+      }, [])[0];
     return {
-      topic: [channel],
-      key: store.default.getState().channels[channel].key,
+      topic: channel,
+      key,
     };
   });
   store.default.dispatch(setChannelsInternal(channels));
