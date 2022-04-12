@@ -102,7 +102,7 @@ export const publishp2pe = async (
   key: string
 ) => {
   try {
-    const encrypted = encryptMsg(privateKey(`0x${key}`), `${id}: ${msg}`);
+    const encrypted = encryptMsg(privateKey(key), `${id}: ${msg}`);
     const message = new TextEncoder().encode(
       JSON.stringify({
         content: encrypted.toString('hex'),
