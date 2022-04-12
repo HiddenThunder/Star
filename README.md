@@ -51,7 +51,7 @@ Next one is
 
 ### Private
 
-When I click to a peer in the list new channel is being created.
+When I click on a peer in the list new channel is being created.
 ![image-4](./assets/README/4.png)
 
 You can see on the left now we have 3 channels. The last channel is a huge random number - supposedly no one will be able to guess it. This is private channel for me and a peer I clicked on.
