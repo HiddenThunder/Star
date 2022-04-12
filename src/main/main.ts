@@ -149,8 +149,12 @@ const createWindow = async () => {
     const message = JSON.parse(messageNotParsed);
     try {
       if (message.sender !== id) {
-        console.log('SENDER', message.content, message.sender);
         await subscribe(node, message.content, echo);
+        await unsubscribe(node, message.sender);
+        const topics = await list(node);
+        mainWindow?.webContents.send('subscribe_to_topic', message.content);
+        mainWindow?.webContents.send('set_topics', topics);
+        console.log('all good');
       }
     } catch (err) {
       console.log(err);
@@ -209,8 +213,8 @@ const createWindow = async () => {
 ipcMain.on('connect_peers', async (event, peerId) => {
   try {
     await subscribe(node, peerId, peerConnecitonSender);
-    await publishToLocalId(node, peerId, id, 'Message');
-    // await unsubscribe(node, peerId);
+    await publishToLocalId(node, peerId, id, "let's connect");
+    event.returnValue = 'All Good';
   } catch (err) {
     console.error(err);
     event.returnValue = -1;

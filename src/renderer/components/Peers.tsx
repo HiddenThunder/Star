@@ -9,10 +9,7 @@ const Peers = () => {
   const peers = useSelector((state) => state.peers);
 
   const dispatch = useDispatch();
-  const { setPeers, setChannels } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { setPeers } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     setPeers('lobby', ipc);
@@ -23,7 +20,6 @@ const Peers = () => {
     if (response === -1) {
       throw new Error('Something went wrong. Try again later');
     }
-    // setChannels(ipc);
   };
 
   return (
