@@ -62,7 +62,7 @@ And private key for our channel already specified and is not chengeable. It is a
 ## How it was made
 
 As already said, Point is built with IPFS and Electron.
-Electron has two tipes of processes - processes for UI, which is chrome's browser window and main process which runs in nodejs.
+Electron has two types of processes - processes for UI, which is chrome's browser window and main process which runs in nodejs.
 
 IPFS is running completely in nodejs (main process).
 
