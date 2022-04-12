@@ -1,4 +1,4 @@
-import { encrypt, decrypt, PrivateKey } from 'eciesjs';
+import { encrypt, decrypt, PrivateKey, PublicKey } from 'eciesjs';
 
 //* ENCODING IS IMPORTANT
 /*  USE HEX HERE EVERYWHERE WHERE POSSIBLE
@@ -29,7 +29,12 @@ String.prototype.hexDecode = function () {
 };
 
 export const privateKey = (hex: string) => {
+  console.log(hex);
   return PrivateKey.fromHex(hex);
+};
+
+export const generatePrivateKey = () => {
+  return new PrivateKey();
 };
 
 export const encryptMsg = (privKey: string, message: string) => {
@@ -45,4 +50,12 @@ export const encryptMsg = (privKey: string, message: string) => {
 export const decryptMsg = (cipher: any, privKey: string) => {
   const decrypted = decrypt(privKey, Buffer.from(cipher, 'hex')).toString();
   return decrypted;
+};
+
+export const generateSharedSecret = (privateKey: string, publicKey: string) => {
+  const PrivKey = PrivateKey.fromHex(privateKey);
+  const PubKey = PublicKey.fromHex(publicKey);
+  const secret = PrivKey.multiply(PubKey);
+
+  return `0x${secret.slice(0, 32).toString('hex')}`;
 };

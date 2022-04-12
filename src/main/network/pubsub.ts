@@ -73,7 +73,7 @@ export const publish = async (
   }
 };
 
-export const publishToLocalId = async (
+export const publishWithoutEncryption = async (
   node: any,
   topic: string,
   id: string,
@@ -89,6 +89,30 @@ export const publishToLocalId = async (
       })
     );
     await node.pubsub.publish(topic, message);
+  } catch (err) {
+    console.log('Error from publshing', err);
+  }
+};
+
+export const publishp2pe = async (
+  node: any,
+  topic: string,
+  id: string,
+  msg: string,
+  key: string
+) => {
+  try {
+    const encrypted = encryptMsg(key, `${id}: ${msg}`);
+    const message = new TextEncoder().encode(
+      JSON.stringify({
+        content: encrypted.toString('hex'),
+        channel: topic,
+        decrypted: false,
+        sender: id,
+      })
+    );
+    await node.pubsub.publish(topic, message);
+    console.log(decryptMsg(encrypted, key));
   } catch (err) {
     console.log('Error from publshing', err);
   }

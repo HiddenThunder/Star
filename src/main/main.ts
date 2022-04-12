@@ -15,15 +15,21 @@ import log from 'electron-log';
 import { randomBytes } from 'crypto';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { decryptMsg, privateKey } from './crypto';
+import {
+  decryptMsg,
+  privateKey,
+  generateSharedSecret,
+  generatePrivateKey,
+} from './crypto';
 import { startNode, stopNode } from './network';
 import LOBBY, {
   subscribe,
   peers,
   list,
-  publishToLocalId,
+  publishWithoutEncryption,
   unsubscribe,
   publish,
+  publishp2pe,
 } from './network/pubsub';
 
 export default class AppUpdater {
@@ -36,11 +42,14 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let node: any;
-let pubKey: string;
+let privKey: string;
 let id: string;
 let peerConnecitonReceiver: any;
 let peerConnecitonSender: any;
 let echo: any;
+let echop2pSender: any;
+let echop2pReceiver: any;
+let echop2pe: any;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -117,6 +126,47 @@ const createWindow = async () => {
     });
   };
 
+  //* ESTABLISH P2P ENCRIPTION
+
+  echop2pSender = async (msg: any) => {
+    const messageNotParsed = new TextDecoder().decode(msg.data);
+    const message = JSON.parse(messageNotParsed);
+    if (message.sender !== id) {
+      const pubKey = message.content;
+      const sharedSecret = generateSharedSecret(privKey, pubKey);
+      console.log(`YOUR SHARED SECRET WITH ${message.sender}: ${sharedSecret}`);
+      mainWindow?.webContents.send('set_key', message.channel, sharedSecret);
+      await unsubscribe(node, message.channel);
+      await subscribe(node, message.channel, echo);
+    }
+  };
+
+  echop2pReceiver = async (msg: any) => {
+    const messageNotParsed = new TextDecoder().decode(msg.data);
+    const message = JSON.parse(messageNotParsed);
+    if (message.sender !== id) {
+      const pubKey = message.content;
+
+      const PrivKey = generatePrivateKey();
+      privKey = PrivKey.toHex();
+
+      await publishWithoutEncryption(
+        node,
+        message.channel,
+        id,
+        PrivKey.publicKey.toHex()
+      );
+
+      const sharedSecret = generateSharedSecret(privKey, pubKey);
+      console.log(`YOUR SHARED SECRET WITH ${message.sender}: ${sharedSecret}`);
+      mainWindow?.webContents.send('set_key', message.channel, sharedSecret);
+      await unsubscribe(node, message.channel);
+      await subscribe(node, message.channel, echo);
+    }
+  };
+
+  //* ESTABLISH P2P CONNECTION
+
   peerConnecitonReceiver = async (msg: any) => {
     const messageNotParsed = new TextDecoder().decode(msg.data);
     const message = JSON.parse(messageNotParsed);
@@ -127,11 +177,11 @@ const createWindow = async () => {
         randomBytes(48, async function (crypto_err, buffer) {
           channelId = buffer.toString('hex');
           //* TESTING
-          await subscribe(node, channelId, echo);
+          await subscribe(node, channelId, echop2pReceiver);
           mainWindow?.webContents.send('subscribe_to_topic', channelId);
           const topics = await list(node);
-          mainWindow?.webContents.send('set_topics', JSON.stringify(topics));
-          await publishToLocalId(node, id, id, channelId);
+          mainWindow?.webContents.send('set_topics', topics);
+          await publishWithoutEncryption(node, id, id, channelId);
           //* IT'S NOT UNDEFINED
           console.log('RECEIVER', channelId);
         });
@@ -149,8 +199,19 @@ const createWindow = async () => {
     const message = JSON.parse(messageNotParsed);
     try {
       if (message.sender !== id) {
-        await subscribe(node, message.content, echo);
+        await subscribe(node, message.content, echop2pSender);
         await unsubscribe(node, message.sender);
+
+        const PrivKey = generatePrivateKey();
+        privKey = PrivKey.toHex();
+
+        await publishWithoutEncryption(
+          node,
+          message.content,
+          id,
+          PrivKey.publicKey.toHex()
+        );
+
         const topics = await list(node);
         mainWindow?.webContents.send('subscribe_to_topic', message.content);
         mainWindow?.webContents.send('set_topics', topics);
@@ -171,7 +232,7 @@ const createWindow = async () => {
   await subscribe(node, id, peerConnecitonReceiver);
   mainWindow?.webContents.send('subscribe_to_topic', id);
   await publish(node, LOBBY, id, `joined channel`);
-  await publishToLocalId(node, id, id, `I'm subscribed to myself`);
+  await publishWithoutEncryption(node, id, id, `I'm subscribed to myself`);
   //* IPFS STUFF END*********** ------------------- //
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -213,7 +274,8 @@ const createWindow = async () => {
 ipcMain.on('connect_peers', async (event, peerId) => {
   try {
     await subscribe(node, peerId, peerConnecitonSender);
-    await publishToLocalId(node, peerId, id, "let's connect");
+    await publishWithoutEncryption(node, peerId, id, "let's connect");
+
     event.returnValue = 'All Good';
   } catch (err) {
     console.error(err);
@@ -221,13 +283,18 @@ ipcMain.on('connect_peers', async (event, peerId) => {
   }
 });
 
-ipcMain.on('publish_message', async (event, channel, message, key: null) => {
+ipcMain.on('publish_message', async (event, channel, message, key = null) => {
   try {
     if (channel !== id) {
-      await publish(node, channel, id, message);
-      event.returnValue = 'All good';
+      if (key) {
+        await publishp2pe(node, channel, id, message, key);
+        event.returnValue = 'All good';
+      } else {
+        await publish(node, channel, id, message);
+        event.returnValue = 'All good';
+      }
     } else {
-      await publishToLocalId(node, channel, id, message);
+      await publishWithoutEncryption(node, channel, id, message);
       event.returnValue = 'All good';
     }
   } catch (err) {

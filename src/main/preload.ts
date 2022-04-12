@@ -6,7 +6,9 @@ const {
 } = require('../renderer/state/actionCreators/chat');
 const {
   setChannelsInternal,
+  setChannelKey,
 } = require('../renderer/state/actionCreators/channels');
+const { setChannel } = require('../renderer/state/actionCreators/channel');
 const { setPeersInternal } = require('../renderer/state/actionCreators/peers');
 
 /** Private Key:
@@ -48,4 +50,8 @@ ipcRenderer.on('send_message', (event: any, msg: any) => {
 
 ipcRenderer.on('get_key', (event: any) => {
   event.sender.send('send_key', store.default.getState().channel.key);
+});
+
+ipcRenderer.on('set_key', (event: any, topic: string, key: string) => {
+  store.default.dispatch(setChannelKey({ topic, key, p2p: true }, topic));
 });
