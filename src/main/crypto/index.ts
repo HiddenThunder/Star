@@ -1,5 +1,4 @@
 import { encrypt, decrypt, PrivateKey, PublicKey } from 'eciesjs';
-import { ecdh } from 'secp256k1';
 
 //* ENCODING IS IMPORTANT
 /*  USE HEX HERE EVERYWHERE WHERE POSSIBLE

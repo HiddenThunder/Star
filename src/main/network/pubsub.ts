@@ -102,7 +102,7 @@ export const publishp2pe = async (
   key: string
 ) => {
   try {
-    const encrypted = encryptMsg(privateKey(key), `${id}: ${msg}`);
+    const encrypted = encryptMsg(key, `${id}: ${msg}`);
     const message = new TextEncoder().encode(
       JSON.stringify({
         content: encrypted.toString('hex'),
@@ -112,7 +112,7 @@ export const publishp2pe = async (
       })
     );
     await node.pubsub.publish(topic, message);
-    console.log(decryptMsg(encrypted, PrivateKey));
+    console.log(decryptMsg(encrypted, key));
   } catch (err) {
     console.log('Error from publshing', err);
   }
