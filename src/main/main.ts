@@ -283,29 +283,26 @@ ipcMain.on('connect_peers', async (event, peerId) => {
   }
 });
 
-ipcMain.on(
-  'publish_message',
-  async (event, channel, message, p2p, key: null) => {
-    try {
-      if (channel !== id) {
-        if (key) {
-          await publishp2pe(node, channel, id, message, key);
-          event.returnValue = 'All good';
-        } else {
-          await publish(node, channel, id, message);
-          event.returnValue = 'All good';
-        }
+ipcMain.on('publish_message', async (event, channel, message, key = null) => {
+  try {
+    if (channel !== id) {
+      if (key) {
+        await publishp2pe(node, channel, id, message, key);
+        event.returnValue = 'All good';
       } else {
-        await publishWithoutEncryption(node, channel, id, message);
+        await publish(node, channel, id, message);
         event.returnValue = 'All good';
       }
-    } catch (err) {
-      event.returnValue = -1;
-      console.log(err);
-      log.warn(err);
+    } else {
+      await publishWithoutEncryption(node, channel, id, message);
+      event.returnValue = 'All good';
     }
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
   }
-);
+});
 
 ipcMain.on('get_channels_list', async (event) => {
   try {

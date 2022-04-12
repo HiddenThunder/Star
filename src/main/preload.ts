@@ -53,5 +53,5 @@ ipcRenderer.on('get_key', (event: any) => {
 });
 
 ipcRenderer.on('set_key', (event: any, topic: string, key: string) => {
-  setChannelKey({ topic, key, p2p: true }, topic);
+  store.default.dispatch(setChannelKey({ topic, key, p2p: true }, topic));
 });
