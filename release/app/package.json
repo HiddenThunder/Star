@@ -1,5 +1,5 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "point",
   "version": "4.5.0",
   "description": "Encrypted p2p chat",
   "main": "./dist/main/main.js",
@@ -17,8 +17,7 @@
     "eciesjs": "^0.3.14",
     "go-ipfs": "^0.12.1",
     "ipfs-http-client": "^56.0.1",
-    "ipfsd-ctl": "^10.0.6",
-    "secp256k1": "^4.0.3"
+    "ipfsd-ctl": "^10.0.6"
   },
   "license": "MIT"
 }

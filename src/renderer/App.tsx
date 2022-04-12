@@ -60,31 +60,41 @@ const Hello = () => {
         contentLabel="Example Modal"
       >
         <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-        <div className="overflow">Isert private key here</div>
+        <div className="overflow">Insert private key here</div>
         {key ? <h3>Key: {key} </h3> : <h3>key is not setted</h3>}
-        <form>
-          <input value={value} onChange={(evt) => setValue(evt.target.value)} />
+        {!channel.p2p ? (
+          <form>
+            <input
+              value={value}
+              onChange={(evt) => setValue(evt.target.value)}
+            />
 
-          <button
-            type="button"
-            onClick={() => {
-              setChannelKey(
-                {
-                  topic: channel.topic,
-                  key: value,
-                },
-                channel.topic
-              );
-              setChannel({ topic: channel.topic, key: value });
-              setValue('');
-            }}
-          >
-            set
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                setChannelKey(
+                  {
+                    topic: channel.topic,
+                    key: value,
+                  },
+                  channel.topic
+                );
+                setChannel({ topic: channel.topic, key: value });
+                setValue('');
+              }}
+            >
+              set
+            </button>
+
+            <button type="button" onClick={closeModal}>
+              close
+            </button>
+          </form>
+        ) : (
           <button type="button" onClick={closeModal}>
             close
           </button>
-        </form>
+        )}
       </Modal>
 
       <div id="top">
