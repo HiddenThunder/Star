@@ -22,17 +22,27 @@ const Text = () => {
 
   const handleSendMessage = async (event: any) => {
     try {
-      const result = await ipc.sendSync(
-        'publish_message',
-        channel.topic,
-        localText
-      );
-      if (result == -1) {
+      let result;
+      if (channel.p2p) {
+        result = await ipc.sendSync(
+          'publish_message',
+          channel.topic,
+          localText,
+          channel.key
+        );
+      } else {
+        result = await ipc.sendSync(
+          'publish_message',
+          channel.topic,
+          localText
+        );
+      }
+      if (result === -1) {
         throw new Error('Something went wrong. Please try again later');
       }
       setLocalText('');
     } catch (err) {
-      console.err(err);
+      console.error(err);
     }
   };
 

@@ -29,6 +29,7 @@ import LOBBY, {
   publishWithoutEncryption,
   unsubscribe,
   publish,
+  publishp2pe,
 } from './network/pubsub';
 
 export default class AppUpdater {
@@ -125,8 +126,6 @@ const createWindow = async () => {
     });
   };
 
-  //* ENCRYPTED P2P CHANNEL
-
   //* ESTABLISH P2P ENCRIPTION
 
   echop2pSender = async (msg: any) => {
@@ -136,6 +135,9 @@ const createWindow = async () => {
       const pubKey = message.content;
       const sharedSecret = generateSharedSecret(privKey, pubKey);
       console.log(`YOUR SHARED SECRET WITH ${message.sender}: ${sharedSecret}`);
+      mainWindow?.webContents.send('set_key', message.channel, sharedSecret);
+      await unsubscribe(node, message.channel);
+      await subscribe(node, message.channel, echo);
     }
   };
 
@@ -157,6 +159,9 @@ const createWindow = async () => {
 
       const sharedSecret = generateSharedSecret(privKey, pubKey);
       console.log(`YOUR SHARED SECRET WITH ${message.sender}: ${sharedSecret}`);
+      mainWindow?.webContents.send('set_key', message.channel, sharedSecret);
+      await unsubscribe(node, message.channel);
+      await subscribe(node, message.channel, echo);
     }
   };
 
@@ -175,7 +180,7 @@ const createWindow = async () => {
           await subscribe(node, channelId, echop2pReceiver);
           mainWindow?.webContents.send('subscribe_to_topic', channelId);
           const topics = await list(node);
-          mainWindow?.webContents.send('set_topics', JSON.stringify(topics));
+          mainWindow?.webContents.send('set_topics', topics);
           await publishWithoutEncryption(node, id, id, channelId);
           //* IT'S NOT UNDEFINED
           console.log('RECEIVER', channelId);
@@ -278,21 +283,29 @@ ipcMain.on('connect_peers', async (event, peerId) => {
   }
 });
 
-ipcMain.on('publish_message', async (event, channel, message, key: null) => {
-  try {
-    if (channel !== id) {
-      await publish(node, channel, id, message);
-      event.returnValue = 'All good';
-    } else {
-      await publishWithoutEncryption(node, channel, id, message);
-      event.returnValue = 'All good';
+ipcMain.on(
+  'publish_message',
+  async (event, channel, message, p2p, key: null) => {
+    try {
+      if (channel !== id) {
+        if (key) {
+          await publishp2pe(node, channel, id, message, key);
+          event.returnValue = 'All good';
+        } else {
+          await publish(node, channel, id, message);
+          event.returnValue = 'All good';
+        }
+      } else {
+        await publishWithoutEncryption(node, channel, id, message);
+        event.returnValue = 'All good';
+      }
+    } catch (err) {
+      event.returnValue = -1;
+      console.log(err);
+      log.warn(err);
     }
-  } catch (err) {
-    event.returnValue = -1;
-    console.log(err);
-    log.warn(err);
   }
-});
+);
 
 ipcMain.on('get_channels_list', async (event) => {
   try {

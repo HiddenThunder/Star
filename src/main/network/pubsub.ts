@@ -94,4 +94,28 @@ export const publishWithoutEncryption = async (
   }
 };
 
+export const publishp2pe = async (
+  node: any,
+  topic: string,
+  id: string,
+  msg: string,
+  key: string
+) => {
+  try {
+    const encrypted = encryptMsg(key, `${id}: ${msg}`);
+    const message = new TextEncoder().encode(
+      JSON.stringify({
+        content: encrypted.toString('hex'),
+        channel: topic,
+        decrypted: false,
+        sender: id,
+      })
+    );
+    await node.pubsub.publish(topic, message);
+    console.log(decryptMsg(encrypted, PrivateKey));
+  } catch (err) {
+    console.log('Error from publshing', err);
+  }
+};
+
 export default LOBBY;
