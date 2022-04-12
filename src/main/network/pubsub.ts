@@ -1,5 +1,6 @@
 const { privateKey, decryptMsg, encryptMsg } = require('../crypto');
 
+// Default private key that is being used for all general channels
 const PrivateKey =
   '0x2a1d5d208b3d551e8662bcf4bd12e66ab4e025ec8ef6e18cbc40c1594794652f';
 
@@ -12,6 +13,7 @@ const LOBBY = 'lobby';
 
 //* BASICS | STARTER
 
+// Subsctibe to given topic(channel) with given callback
 export const subscribe = async (
   node: any,
   topic: string,
@@ -24,6 +26,7 @@ export const subscribe = async (
   }
 };
 
+// Get list of peers in given topics
 export const peers = (node: any, topic: string) => {
   try {
     return node.pubsub.peers(topic);
@@ -33,6 +36,7 @@ export const peers = (node: any, topic: string) => {
   }
 };
 
+// Get list of topics
 export const list = (node: any) => {
   try {
     return node.pubsub.ls();
@@ -42,6 +46,7 @@ export const list = (node: any) => {
   }
 };
 
+// Unsubscribe from given topic
 export const unsubscribe = async (node: any, topic: string) => {
   try {
     await node.pubsub.unsubscribe(topic);
@@ -50,6 +55,9 @@ export const unsubscribe = async (node: any, topic: string) => {
   }
 };
 
+/** Encrypt message with default private key
+ * and publish it
+ */
 export const publish = async (
   node: any,
   topic: string,
@@ -58,6 +66,9 @@ export const publish = async (
 ) => {
   try {
     const encrypted = encryptMsg(PrivateKey, `${id}: ${msg}`);
+    /** For pubsub we need to provide encoded string
+     * But message is an object - we stringifying it
+     */
     const message = new TextEncoder().encode(
       JSON.stringify({
         content: encrypted.toString('hex'),
@@ -73,6 +84,9 @@ export const publish = async (
   }
 };
 
+/** Publish message
+ * without encryption
+ */
 export const publishWithoutEncryption = async (
   node: any,
   topic: string,
@@ -80,6 +94,9 @@ export const publishWithoutEncryption = async (
   msg: string
 ) => {
   try {
+    /** For pubsub we need to provide encoded string
+     * But message is an object - we stringifying it
+     */
     const message = new TextEncoder().encode(
       JSON.stringify({
         content: msg,
@@ -94,6 +111,9 @@ export const publishWithoutEncryption = async (
   }
 };
 
+/** Encrypt message with random private key
+ * and publish it
+ */
 export const publishp2pe = async (
   node: any,
   topic: string,
@@ -103,6 +123,9 @@ export const publishp2pe = async (
 ) => {
   try {
     const encrypted = encryptMsg(key, `${id}: ${msg}`);
+    /** For pubsub we need to provide encoded string
+     * But message is an object - we stringifying it
+     */
     const message = new TextEncoder().encode(
       JSON.stringify({
         content: encrypted.toString('hex'),
