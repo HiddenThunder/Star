@@ -73,7 +73,7 @@ export const publish = async (
   }
 };
 
-export const publishToLocalId = async (
+export const publishWithoutEncryption = async (
   node: any,
   topic: string,
   id: string,
