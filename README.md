@@ -57,7 +57,7 @@ When I click to a peer in the list new channel is being created.
 You can see on the left now we have 3 channels. The last channel is a huge random number - supposedly no one will be able to guess it. This is private channel for me and a peer I clicked on.
 ![image-5](./assets/README/5.png)
 
-And private key for our channel already specified for the convinience. It is achieved with ECDH, but I'll talk about this later.
+And private key for our channel already specified and is not chengeable. It is achieved with ECDH, but I'll talk about this later.
 
 ## How it was made
 
