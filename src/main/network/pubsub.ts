@@ -42,13 +42,9 @@ export const list = (node: any) => {
   }
 };
 
-export const unsubscribe = async (
-  node: any,
-  topic: string,
-  callback: Callback
-) => {
+export const unsubscribe = async (node: any, topic: string) => {
   try {
-    await node.pubsub.unsubscribe(topic, callback);
+    await node.pubsub.unsubscribe(topic);
   } catch (err) {
     console.log('From pubsub unsibscribe', err);
   }
@@ -86,7 +82,7 @@ export const publishToLocalId = async (
   try {
     const message = new TextEncoder().encode(
       JSON.stringify({
-        content: `${id}: ${msg}`,
+        content: msg,
         channel: topic,
         decrypted: true,
         sender: id,
