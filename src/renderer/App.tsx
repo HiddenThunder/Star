@@ -59,7 +59,6 @@ const Hello = () => {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={customStyles}
-        contentLabel="Example Modal"
       >
         <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
 
@@ -71,6 +70,20 @@ const Hello = () => {
               <input
                 value={value}
                 onChange={(evt) => setValue(evt.target.value)}
+                onKeyPress={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    setChannelKey(
+                      {
+                        topic: channel.topic,
+                        key: value,
+                      },
+                      channel.topic
+                    );
+                    setChannel({ topic: channel.topic, key: value });
+                    setValue('');
+                  }
+                }}
               />
 
               <button
