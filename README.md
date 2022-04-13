@@ -1,4 +1,4 @@
-# Point
+# Star
 
 ## TL;DR
 
@@ -11,15 +11,17 @@ npm run start
 
 ## Description
 
-Point is encrypted peer to peer chat. It uses IPFS and runs as desktop app in electron.
+Star is encrypted peer to peer chat. It uses IPFS and runs as desktop app in electron.
 
-Previously Point was called [Sytime](https://github.com/ThirdRockEngineering/Sytime). I didn't like this name tbh. Sytime was IRC in browser and it wasn't encrypted at all. Browsers today are not best places to run IPFS, there are many technical difficulties. That's why it runs in Electron atm.
-
-Btw I don't like name point as well, so maybe in the future it'll be changed again ¯\\\_(ツ)\_/¯
+Previously Star was called [Sytime](https://github.com/ThirdRockEngineering/Sytime). I didn't like this name tbh. Sytime was IRC in browser and it wasn't encrypted at all. Browsers today are not best places to run IPFS, there are many technical difficulties. That's why it runs in Electron atm.
 
 ## Why
 
-At first it was just curiosity, I was thinking how to make serveless encrypted chat. Most popular chats today are using servers. But most of backend code is close source and I totally understand it: private keys need to be in secret places and stuff. I just don't like close source.
+At first it was just curiosity, I was thinking how to make serveless encrypted chat. Most popular chats today are using servers. But most of backend code is close source and I totally understand it: private keys need to be in secret places and stuff. I just don't like close source ¯\\\_(ツ)\_/¯
+
+I want to make starts a bit more reachable and I think we need to be honest with ourselves, it'll make it easier for us to work together :stars:
+
+In my dreams we all don't need encryption at all, because we all are friends. But to get there we need to go all the way through our secrets. i think. so I tried (and will work on it!) to do this properly :heart_decoration:
 
 ## How does it work
 
@@ -61,7 +63,7 @@ And private key for our channel already specified and is not chengeable. It is a
 
 ## How it was made
 
-As already said, Point is built with IPFS and Electron.
+As already said, Star is built with IPFS and Electron.
 Electron has two types of processes - processes for UI, which is chrome's browser window and main process which runs in nodejs.
 
 IPFS is running completely in nodejs (main process).
@@ -70,7 +72,7 @@ IPFS is running completely in nodejs (main process).
 
 `ipfsd-ctl` is used to spawn `go-ipfs` as separate process (another one, third type specifically for ipfs node). And `ipfs-http-client` is used to connect to this node as to remote node. The reason for this is simple: I am sorry to telling this, but in my opinion `go-ipfs` at the moment I am writing this is much more stable than `js` verion.
 
-`eciesjs`, which is handfull wrap around bitcoin's `secp256k1` for encryption. With this private key is created for every general chat (right now there is only one private key for every general chat). When private chat is created - each peer creates new private key for this specific chat and shares public key with other. `eciesjs` has built-in `multiply` function, which produces scalar multiplication for point on curve which allows to make ECDH.
+`eciesjs`, which is handfull wrap around bitcoin's `secp256k1` for encryption. With this private key is created for every general chat (right now there is only one private key for every general chat). When private chat is created - each peer creates new private key for this specific chat and shares public key with other. `eciesjs` has built-in `multiply` function, which produces scalar multiplication for star on curve which allows to make ECDH.
 
 ### Renderer process
 
