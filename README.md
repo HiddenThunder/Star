@@ -82,6 +82,8 @@ The communication between main and renderer processes is a [big topic](https://w
 
 ## Resources:
 
+You can check [roadmap](./ROADMAP.md) to see how it goes
+
 List that might be helpful to get started
 
 ### For pubsub:
