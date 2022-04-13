@@ -4,6 +4,7 @@ import log from 'electron-log';
 import Ctl from 'ipfsd-ctl';
 import * as ipfsHttpModule from 'ipfs-http-client';
 
+// "remote" ipfs server
 const port = 43134;
 
 const server = Ctl.createServer(port, {
@@ -39,6 +40,7 @@ export const startNode = async () => {
     });
 
     node = ipfsd.api;
+    // check if everything is good
     const stats = await node.stats.repo();
     console.log(stats);
   } catch (err) {
@@ -48,6 +50,7 @@ export const startNode = async () => {
   return node;
 };
 
+// before exit stop everything
 export const stopNode = async () => {
   await node.stop();
   await ipfsd.stop();

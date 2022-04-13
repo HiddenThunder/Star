@@ -40,16 +40,24 @@ export default class AppUpdater {
   }
 }
 
+// globals
 let mainWindow: BrowserWindow | null = null;
+
+// ipfs node
 let node: any;
+
+// randomly generated private key for ECDH
 let privKey: string;
+
+// your ipfs node peer id
 let id: string;
+
+// callback functions for pubsub
 let peerConnecitonReceiver: any;
 let peerConnecitonSender: any;
 let echo: any;
 let echop2pSender: any;
 let echop2pReceiver: any;
-let echop2pe: any;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -100,13 +108,22 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-  //* CALLBACK FUNCTIONS FOR PUBSUB
 
+  // CALLBACK FUNCTIONS FOR PUBSUB
+
+  /**
+   * Regular callback function
+   * that decryptes message before pushing it to ui
+   * because all messages are encrypted when going through pubsub
+   * channels
+   */
   echo = async (msg: any) => {
     mainWindow?.webContents.send('get_key');
     const messageNotParsed = new TextDecoder().decode(msg.data);
-    //* once here, not on
-    //* https://stackoverflow.com/questions/47597982/send-sync-message-from-ipcmain-to-ipcrenderer-electron
+    /**
+     * once here, not on
+     * https://stackoverflow.com/questions/47597982/send-sync-message-from-ipcmain-to-ipcrenderer-electron
+     */
     ipcMain.once('send_key', (event, key) => {
       if (key) {
         try {
@@ -126,30 +143,62 @@ const createWindow = async () => {
     });
   };
 
-  //* ESTABLISH P2P ENCRIPTION
+  /**
+   * ESTABLISH P2P ENCRIPTION
+   * This is what is being done after peers created a
+   * specific channel for themselves
+   */
 
+  /**
+   * callback for private chat initiator
+   * it'll be called only after second peer sends
+   * message to the channel
+   */
   echop2pSender = async (msg: any) => {
     const messageNotParsed = new TextDecoder().decode(msg.data);
     const message = JSON.parse(messageNotParsed);
+
+    // Check if it is not our message
     if (message.sender !== id) {
+      /**
+       * This is public key that was send by other peer
+       * for ECDH
+       */
       const pubKey = message.content;
       const sharedSecret = generateSharedSecret(privKey, pubKey);
       console.log(`YOUR SHARED SECRET WITH ${message.sender}: ${sharedSecret}`);
+
+      // Set shared secret as key for private channel
       mainWindow?.webContents.send('set_key', message.channel, sharedSecret);
+
+      // Subscribe to this channel with another callback
       await unsubscribe(node, message.channel);
       await subscribe(node, message.channel, echo);
     }
   };
 
+  /**
+   * callback for private chat receiver
+   * it'll be called first and it'll send
+   * public key to the channel for ECDH
+   */
   echop2pReceiver = async (msg: any) => {
     const messageNotParsed = new TextDecoder().decode(msg.data);
     const message = JSON.parse(messageNotParsed);
+
+    // Check if it is not our message
     if (message.sender !== id) {
+      /**
+       * This is what was sent by initiator
+       * at the very beginning of that channnel
+       */
       const pubKey = message.content;
 
+      // Generate new private key
       const PrivKey = generatePrivateKey();
       privKey = PrivKey.toHex();
 
+      // send public key to the channel
       await publishWithoutEncryption(
         node,
         message.channel,
@@ -157,33 +206,56 @@ const createWindow = async () => {
         PrivKey.publicKey.toHex()
       );
 
+      // ECDH
       const sharedSecret = generateSharedSecret(privKey, pubKey);
       console.log(`YOUR SHARED SECRET WITH ${message.sender}: ${sharedSecret}`);
       mainWindow?.webContents.send('set_key', message.channel, sharedSecret);
+
+      // Subscribe to this channel with another callbackS
       await unsubscribe(node, message.channel);
       await subscribe(node, message.channel, echo);
     }
   };
 
-  //* ESTABLISH P2P CONNECTION
+  /**
+   * ESTABLISH P2P CONNECTION
+   * This is what going on when peers haven't created
+   * specific channel for themselves yet
+   * so it's being send to the peer id of receiver (because receiver
+   * is subscribed to themself)
+   */
 
+  /**
+   * This is callback function for receiver
+   * He is subscribed to his-id channel
+   * and each time he receives messages to his channel
+   * this callback is being invoked
+   */
   peerConnecitonReceiver = async (msg: any) => {
     const messageNotParsed = new TextDecoder().decode(msg.data);
     const message = JSON.parse(messageNotParsed);
 
+    // Check if it is not our message
     if (message.sender !== id) {
       try {
         let channelId: any;
+        /**
+         * Here we are generating a random 48 bytes
+         * They'll be a name for private channel
+         */
         randomBytes(48, async function (crypto_err, buffer) {
           channelId = buffer.toString('hex');
-          //* TESTING
+          // Subscribe to this new channel
           await subscribe(node, channelId, echop2pReceiver);
-          mainWindow?.webContents.send('subscribe_to_topic', channelId);
+          // Update UI
           const topics = await list(node);
           mainWindow?.webContents.send('set_topics', topics);
+          mainWindow?.webContents.send('subscribe_to_topic', channelId);
+          /**
+           * Send channel name to the id-topic
+           * so the other peer will be able to subscribe
+           */
           await publishWithoutEncryption(node, id, id, channelId);
-          //* IT'S NOT UNDEFINED
-          console.log('RECEIVER', channelId);
         });
       } catch (err) {
         console.log(err);
@@ -194,17 +266,28 @@ const createWindow = async () => {
     }
   };
 
+  /**
+   * This is callback for initiator or sender
+   * sender is subscribed to the peer
+   * he wants to start private chat with
+   */
   peerConnecitonSender = async (msg: any) => {
     const messageNotParsed = new TextDecoder().decode(msg.data);
     const message = JSON.parse(messageNotParsed);
     try {
+      // Check if it is not our message
       if (message.sender !== id) {
+        // We are subsctibing to newly created private channel
         await subscribe(node, message.content, echop2pSender);
+
+        // And unsubsctibing from this one
         await unsubscribe(node, message.sender);
 
+        // Generating new random private key
         const PrivKey = generatePrivateKey();
         privKey = PrivKey.toHex();
 
+        // Sending it for ECDH
         await publishWithoutEncryption(
           node,
           message.content,
@@ -212,6 +295,7 @@ const createWindow = async () => {
           PrivKey.publicKey.toHex()
         );
 
+        // Update UI
         const topics = await list(node);
         mainWindow?.webContents.send('subscribe_to_topic', message.content);
         mainWindow?.webContents.send('set_topics', topics);
@@ -223,17 +307,35 @@ const createWindow = async () => {
     }
   };
 
-  //* IPFS STUFF BEGIN********* ------------------- //
+  // IPFS STUFF INITIATING START
+
+  // spawn the node
   node = await startNode();
+
+  // subscribe to first general channel
   await subscribe(node, LOBBY, echo);
+
+  // update UI
   mainWindow?.webContents.send('subscribe_to_topic', LOBBY);
+
+  // Get our peer id
   const me = await node.id();
   id = me.id;
+
+  /**
+   * Subscribing to ourselves as a part of a protocol
+   * notice here we use `peerConnecitonReceiver` callback
+   */
   await subscribe(node, id, peerConnecitonReceiver);
+
+  // update UI
   mainWindow?.webContents.send('subscribe_to_topic', id);
+
+  // publish first messages to both channels
   await publish(node, LOBBY, id, `joined channel`);
   await publishWithoutEncryption(node, id, id, `I'm subscribed to myself`);
-  //* IPFS STUFF END*********** ------------------- //
+
+  // IPFS STUFF INITIATING END
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -268,14 +370,17 @@ const createWindow = async () => {
 };
 
 /**
- * IPC
+ * listeners for IPC
  */
 
+// Call when want to start private chat with someone
 ipcMain.on('connect_peers', async (event, peerId) => {
   try {
+    // subsctibe to them with specific callback
     await subscribe(node, peerId, peerConnecitonSender);
-    await publishWithoutEncryption(node, peerId, id, "let's connect");
 
+    // publish first message to initiate their callback
+    await publishWithoutEncryption(node, peerId, id, "let's connect");
     event.returnValue = 'All Good';
   } catch (err) {
     console.error(err);
@@ -283,17 +388,24 @@ ipcMain.on('connect_peers', async (event, peerId) => {
   }
 });
 
+// Call when want to publish message
 ipcMain.on('publish_message', async (event, channel, message, key = null) => {
   try {
+    // Don't want to publish encrypted message to our channel
     if (channel !== id) {
+      // encrypt with specified key
       if (key) {
         await publishp2pe(node, channel, id, message, key);
         event.returnValue = 'All good';
-      } else {
+      }
+      // encrypt with general channel key
+      else {
         await publish(node, channel, id, message);
         event.returnValue = 'All good';
       }
-    } else {
+    }
+    // publish unincrypted to ourself
+    else {
       await publishWithoutEncryption(node, channel, id, message);
       event.returnValue = 'All good';
     }
@@ -304,11 +416,13 @@ ipcMain.on('publish_message', async (event, channel, message, key = null) => {
   }
 });
 
+// Call when want to get channel
 ipcMain.on('get_channels_list', async (event) => {
   try {
     const topicsList = await list(node);
 
-    //* TEMPORARY SOLUTION TO CHANNELS UPDATE
+    // TEMPORARY SOLUTION TO CHANNELS UPDATE
+    // it was done because atm here is no optimal schema design
     topicsList.forEach((topic: string) => {
       mainWindow?.webContents.send('subscribe_to_topic', topic);
     });
@@ -321,6 +435,7 @@ ipcMain.on('get_channels_list', async (event) => {
   }
 });
 
+// Call when want to get peers
 ipcMain.on('get_peers_list', async (event, channel: string) => {
   try {
     event.returnValue = await peers(node, channel);
@@ -331,6 +446,7 @@ ipcMain.on('get_peers_list', async (event, channel: string) => {
   }
 });
 
+// Call when want to get decrypt message
 ipcMain.on('decrypt_messages', async (event, messages: any, key: string) => {
   try {
     const decryptedMessages = messages.map((message: any) => {
@@ -349,12 +465,11 @@ ipcMain.on('decrypt_messages', async (event, messages: any, key: string) => {
 });
 
 /**
- * Add event listeners...
+ * Add event listeners for app
+ * just stop ipfs node before quit
  */
 
 app.on('window-all-closed', async () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
   await stopNode();
   app.quit();
 });
