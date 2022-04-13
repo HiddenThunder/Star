@@ -72,7 +72,7 @@ IPFS is running completely in nodejs (main process).
 
 `ipfsd-ctl` is used to spawn `go-ipfs` as separate process (another one, third type specifically for ipfs node). And `ipfs-http-client` is used to connect to this node as to remote node. The reason for this is simple: I am sorry to telling this, but in my opinion `go-ipfs` at the moment I am writing this is much more stable than `js` verion.
 
-`eciesjs`, which is handfull wrap around bitcoin's `secp256k1` for encryption. With this private key is created for every general chat (right now there is only one private key for every general chat). When private chat is created - each peer creates new private key for this specific chat and shares public key with other. `eciesjs` has built-in `multiply` function, which produces scalar multiplication for point on curve which allows to make ECDH.
+`eciesjs`, which is handfull wrap around bitcoin's `secp256k1` for encryption. With this one private key is created for every general (public) chat (right now there is only one private key for every general chat). When private chat is being created - each peer creates new private key for this specific chat and shares public key with other. `eciesjs` has built-in `multiply` function, which produces scalar multiplication for point on curve which allows to make ECDH.
 
 ### Renderer process
 
