@@ -73,15 +73,17 @@ const Hello = () => {
                 onKeyPress={(event) => {
                   if (event.key === 'Enter') {
                     event.preventDefault();
-                    setChannelKey(
-                      {
-                        topic: channel.topic,
-                        key: value,
-                      },
-                      channel.topic
-                    );
-                    setChannel({ topic: channel.topic, key: value });
-                    setValue('');
+                    if (value.length) {
+                      setChannelKey(
+                        {
+                          topic: channel.topic,
+                          key: value,
+                        },
+                        channel.topic
+                      );
+                      setChannel({ topic: channel.topic, key: value });
+                      setValue('');
+                    }
                   }
                 }}
               />
