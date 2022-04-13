@@ -13,7 +13,7 @@ npm run start
 
 Star is encrypted peer to peer chat. It uses IPFS and runs as desktop app in electron.
 
-Previously Star was called [Sytime](https://github.com/ThirdRockEngineering/Sytime). I didn't like this name tbh. Sytime was IRC in browser and it wasn't encrypted at all. Browsers today are not best places to run IPFS, there are many technical difficulties. That's why it runs in Electron atm.
+Previously Star was called [Sytime](https://github.com/ThirdRockEngineering/Sytime). I didn't like this name tbh. Sytime was IRC in browser and it wasn't encrypted at all. Browsers today are not best places to run IPFS, there are many technical difficulties. That's why i decided to use Electron atm.
 
 ## Why
 
@@ -22,6 +22,8 @@ At first it was just curiosity, I was thinking how to make serveless encrypted c
 I want to make starts a bit more reachable and I think we need to be honest with ourselves, it'll make it easier for us to work together :stars:
 
 In my dreams we all don't need encryption at all, because we all are friends. But to get there we need to go all the way through our secrets. i think. so I tried (and will work on it!) to do this properly :heart_decoration:
+
+Open source encryption is the most transparrent encryption
 
 ## How does it work
 
