@@ -2,6 +2,8 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
+
+// Modal is a dialog window
 import Modal from 'react-modal';
 import icon from '../../assets/logo.png';
 import Text from './components/Text';

@@ -24,6 +24,7 @@ const Text = () => {
     try {
       let result;
       if (channel.p2p) {
+        // If it is private chat
         result = await ipc.sendSync(
           'publish_message',
           channel.topic,
@@ -31,6 +32,7 @@ const Text = () => {
           channel.key
         );
       } else {
+        // If it is general chat the general key is used
         result = await ipc.sendSync(
           'publish_message',
           channel.topic,
