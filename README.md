@@ -19,11 +19,9 @@ Previously Star was called [Sytime](https://github.com/ThirdRockEngineering/Syti
 
 At first it was just curiosity, I was thinking how to make serveless encrypted chat. Most popular chats today are using servers. But most of backend code is close source and I totally understand it: private keys need to be in secret places and stuff. I just don't like close source ¯\\\_(ツ)\_/¯
 
-I want to make starts a bit more reachable and I think we need to be honest with ourselves, it'll make it easier for us to work together :stars:
+I want to make stars a bit more reachable and I believe open source will help us :stars:
 
-In my dreams we all don't need encryption at all, because we all are friends. But to get there we need to go all the way through our secrets. i think. so I tried (and will work on it!) to do this properly :heart_decoration:
-
-Open source encryption is the most transparrent encryption
+In my dreams we all don't need encryption at all, because we all are friends :pensive:
 
 ## How does it work
 
