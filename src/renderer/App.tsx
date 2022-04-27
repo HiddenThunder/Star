@@ -4,133 +4,42 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Modal is a dialog window
-import Modal from 'react-modal';
 import icon from '../../assets/logo.png';
 import Text from './components/Text';
 import Peers from './components/Peers';
 import Chat from './components/Chat';
 import Channels from './components/Channels';
+import Key from './components/Key';
+import Profile from './components/Profile';
 import { actionCreators } from './state/actionCreators';
 import './App.css';
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    maxWidth: '60vh',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    overflowWrap: 'break-word',
-  },
-};
-
-Modal.setAppElement('#root');
-
 const Hello = () => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState('');
-
-  const key: string | null = useSelector((state) => state.channel.key);
-  const channel = useSelector((state) => state.channel);
-
   const dispatch = useDispatch();
-  const { setChannel, setChannelKey } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { setChannel } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     setChannel({ topic: 'lobby', key: null });
   }, []);
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
   return (
     <>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-      >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
+      <div className="mycolumn">
+        <div id="top">
+          <span id="icon">
+            <img src={icon} alt="ipfs logo" className="icon" />
+          </span>
+          <Key />
+          <Profile />
+        </div>
 
-        {key ? <h3>Key: {key} </h3> : <h3>key is not setted</h3>}
-        {!channel.p2p ? (
-          <>
-            <div className="overflow">Insert private key here</div>
-            <form>
-              <input
-                value={value}
-                onChange={(evt) => setValue(evt.target.value)}
-                onKeyPress={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    if (value.length) {
-                      setChannelKey(
-                        {
-                          topic: channel.topic,
-                          key: value,
-                        },
-                        channel.topic
-                      );
-                      setChannel({ topic: channel.topic, key: value });
-                      setValue('');
-                    }
-                  }
-                }}
-              />
-
-              <button
-                type="button"
-                onClick={() => {
-                  setChannelKey(
-                    {
-                      topic: channel.topic,
-                      key: value,
-                    },
-                    channel.topic
-                  );
-                  setChannel({ topic: channel.topic, key: value });
-                  setValue('');
-                }}
-              >
-                set
-              </button>
-
-              <button type="button" onClick={closeModal}>
-                close
-              </button>
-            </form>
-          </>
-        ) : (
-          <button type="button" onClick={closeModal}>
-            close
-          </button>
-        )}
-      </Modal>
-
-      <div id="top">
-        <span id="icon">
-          <img src={icon} alt="ipfs logo" className="icon" />
-        </span>
-
-        <button id="key" type="button" onClick={openModal}>
-          Set key
-        </button>
+        <div className="container">
+          <Channels />
+          <Chat />
+          <Peers />
+        </div>
+        <Text />
       </div>
-
-      <Channels />
-      <Chat />
-      <Peers />
-      <Text />
     </>
   );
 };

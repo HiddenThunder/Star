@@ -55,7 +55,7 @@ const Text = () => {
   };
 
   return (
-    <>
+    <div id="text">
       <input
         id="textarea"
         value={localText}
@@ -65,7 +65,7 @@ const Text = () => {
       <button id="send-message" type="button" onClick={handleSendMessage}>
         Send
       </button>
-    </>
+    </div>
   );
 };
 

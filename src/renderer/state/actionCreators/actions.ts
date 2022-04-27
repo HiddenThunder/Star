@@ -9,3 +9,4 @@ export { setPeers } from './peers';
 export { setKey, resetKey } from './key';
 export { setChannel } from './channel';
 export { setPeerList, addPeer } from './connectedPeers';
+export { setProfile } from './profile';
