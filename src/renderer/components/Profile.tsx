@@ -72,9 +72,16 @@ const Profile = () => {
         </form>
       </Modal>
 
-      <button id="key" type="button" onClick={openModal}>
-        Set profile
-      </button>
+      <div>
+        <img
+          id="pfp"
+          src="https://ipfs.io/ipfs/bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg"
+          alt="pfp"
+        />
+        <button id="key" type="button" onClick={openModal}>
+          Set profile
+        </button>
+      </div>
     </>
   );
 };
