@@ -115,13 +115,37 @@ h3.header {
   border-bottom: 1px rgb(178, 196, 192) solid;
 }
 
-#profile-pic {
+.pfp-container {
+  position: relative;
+  text-align: center;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.profile-pic {
   display: flex;
   text-align: center;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
-#pfp {
-  max-width: 50px;
+#picture {
+  position: relative;
+  max-height: 6vh;
+}
+
+.pfp {
+  max-width: 6vh;
+  max-height: 6vh
+}
+
+.pfp-chat {
+  display: inline;
+  max-width: 6vh;
+  max-height: 6vh
 }

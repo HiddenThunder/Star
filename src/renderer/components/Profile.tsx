@@ -19,9 +19,19 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
+const { ipc } = window.electron;
+
 const Profile = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState('');
+  const profile = useSelector((state) => state.profile);
+
+  const { username, imageHash } = profile;
+
+  const [value, setValue] = useState(username || '');
+  const [imageLink, setImageLink] = useState(
+    imageHash ||
+      'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg'
+  );
 
   const dispatch = useDispatch();
   const { setProfile } = bindActionCreators(actionCreators, dispatch);
@@ -34,6 +44,18 @@ const Profile = () => {
     setIsOpen(false);
   }
 
+  const handleUpload = (event) => {
+    try {
+      const hash = ipc.sendSync('upload_pfp');
+      if (hash == -1) {
+        throw new Error('Something went wrong. try again later');
+      }
+      setImageLink(hash);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -41,46 +63,52 @@ const Profile = () => {
         onRequestClose={closeModal}
         style={customStyles}
       >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Profile</h2>
+        <h2>Profile</h2>
 
-        <form>
-          <div className="profile-pic">
-            <img
-              id="pfp"
-              src="https://ipfs.io/ipfs/bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg"
-              alt="pfp"
-            />
-            <button type="button">upload new pic</button>
-          </div>
-          <input value={value} onChange={(evt) => setValue(evt.target.value)} />
+        <input
+          value={value}
+          onChange={(evt) => setValue(evt.target.value)}
+          placeholder="input your username"
+        />
 
-          <button
-            type="button"
-            onClick={() => {
-              setProfile({
-                imageHash: hash,
-                username: value,
-              });
-            }}
-          >
-            set profile
+        <div className="profile-pic">
+          <img
+            className="pfp"
+            src={`https://ipfs.io/ipfs/${imageLink}`}
+            alt="pfp"
+          />
+          <button type="button" onClick={handleUpload}>
+            upload new pic
           </button>
+        </div>
 
-          <button type="button" onClick={closeModal}>
-            close
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={() => {
+            setProfile({
+              imageHash: imageLink,
+              username: value,
+            });
+          }}
+        >
+          set profile
+        </button>
+        <button type="button" onClick={closeModal}>
+          close
+        </button>
       </Modal>
 
-      <div>
-        <img
-          id="pfp"
-          src="https://ipfs.io/ipfs/bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg"
-          alt="pfp"
-        />
-        <button id="key" type="button" onClick={openModal}>
+      <div className="pfp-container">
+        <div className="pfp">
+          <img
+            id="picture"
+            src={`https://ipfs.io/ipfs/${imageLink}`}
+            alt="pfp"
+          />
+        </div>
+        <div className="centered" onClick={openModal}>
           Set profile
-        </button>
+        </div>
       </div>
     </>
   );

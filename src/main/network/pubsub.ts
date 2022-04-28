@@ -62,6 +62,7 @@ export const publish = async (
   node: any,
   topic: string,
   id: string,
+  imageHash: string,
   msg: string
 ) => {
   try {
@@ -73,6 +74,7 @@ export const publish = async (
       JSON.stringify({
         content: encrypted.toString('hex'),
         channel: topic,
+        imageHash,
         decrypted: false,
         sender: id,
       })
@@ -91,6 +93,7 @@ export const publishWithoutEncryption = async (
   node: any,
   topic: string,
   id: string,
+  imageHash: string,
   msg: string
 ) => {
   try {
@@ -101,6 +104,7 @@ export const publishWithoutEncryption = async (
       JSON.stringify({
         content: msg,
         channel: topic,
+        imageHash,
         decrypted: true,
         sender: id,
       })
@@ -118,6 +122,7 @@ export const publishp2pe = async (
   node: any,
   topic: string,
   id: string,
+  imageHash: string,
   msg: string,
   key: string
 ) => {
@@ -130,6 +135,7 @@ export const publishp2pe = async (
       JSON.stringify({
         content: encrypted.toString('hex'),
         channel: topic,
+        imageHash,
         decrypted: false,
         sender: id,
       })
