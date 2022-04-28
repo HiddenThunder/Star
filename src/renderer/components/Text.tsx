@@ -10,7 +10,7 @@ const Text = () => {
   const channel = useSelector((state) => state.channel);
   const profile = useSelector((state) => state.profile);
 
-  const username = profile.username || null;
+  const username = profile.username || undefined;
   const imageHash =
     profile.imageHash ||
     'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg';

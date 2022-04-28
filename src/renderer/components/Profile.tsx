@@ -102,7 +102,10 @@ const Profile = () => {
         <div className="pfp">
           <img
             id="picture"
-            src={`https://ipfs.io/ipfs/${imageLink}`}
+            src={`https://ipfs.io/ipfs/${
+              imageHash ||
+              'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg'
+            }`}
             alt="pfp"
           />
         </div>
