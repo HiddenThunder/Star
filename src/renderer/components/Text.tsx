@@ -8,6 +8,12 @@ const { ipc } = window.electron;
 const Text = () => {
   const [localText, setLocalText] = useState('');
   const channel = useSelector((state) => state.channel);
+  const profile = useSelector((state) => state.profile);
+
+  const username = profile.username || undefined;
+  const imageHash =
+    profile.imageHash ||
+    'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg';
 
   //* REDUX STUFF
   const dispatch = useDispatch();
@@ -29,14 +35,19 @@ const Text = () => {
           'publish_message',
           channel.topic,
           localText,
-          channel.key
+          channel.key,
+          username,
+          imageHash
         );
       } else {
         // If it is general chat the general key is used
         result = await ipc.sendSync(
           'publish_message',
           channel.topic,
-          localText
+          localText,
+          null,
+          username,
+          imageHash
         );
       }
       if (result === -1) {
@@ -55,7 +66,7 @@ const Text = () => {
   };
 
   return (
-    <>
+    <div id="text">
       <input
         id="textarea"
         value={localText}
@@ -65,7 +76,7 @@ const Text = () => {
       <button id="send-message" type="button" onClick={handleSendMessage}>
         Send
       </button>
-    </>
+    </div>
   );
 };
 

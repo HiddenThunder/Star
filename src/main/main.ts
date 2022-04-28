@@ -9,11 +9,13 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import fs from 'fs';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { randomBytes } from 'crypto';
 import MenuBuilder from './menu';
+
 import { resolveHtmlPath } from './util';
 import {
   decryptMsg,
@@ -203,6 +205,7 @@ const createWindow = async () => {
         node,
         message.channel,
         id,
+        'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
         PrivKey.publicKey.toHex()
       );
 
@@ -255,7 +258,13 @@ const createWindow = async () => {
            * Send channel name to the id-topic
            * so the other peer will be able to subscribe
            */
-          await publishWithoutEncryption(node, id, id, channelId);
+          await publishWithoutEncryption(
+            node,
+            id,
+            id,
+            'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+            channelId
+          );
         });
       } catch (err) {
         console.log(err);
@@ -292,6 +301,7 @@ const createWindow = async () => {
           node,
           message.content,
           id,
+          'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
           PrivKey.publicKey.toHex()
         );
 
@@ -332,8 +342,20 @@ const createWindow = async () => {
   mainWindow?.webContents.send('subscribe_to_topic', id);
 
   // publish first messages to both channels
-  await publish(node, LOBBY, id, `joined channel`);
-  await publishWithoutEncryption(node, id, id, `I'm subscribed to myself`);
+  await publish(
+    node,
+    LOBBY,
+    id,
+    'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+    `joined channel`
+  );
+  await publishWithoutEncryption(
+    node,
+    id,
+    id,
+    'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+    `I'm subscribed to myself`
+  );
 
   // IPFS STUFF INITIATING END
 
@@ -373,6 +395,26 @@ const createWindow = async () => {
  * listeners for IPC
  */
 
+ipcMain.on('upload_pfp', async (event) => {
+  try {
+    const image = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      filters: { name: 'Images', extensions: ['jpg', 'png', 'gif'] },
+    });
+
+    const pathToFile = image.filePaths[0];
+    const readStream = fs.createReadStream(pathToFile);
+
+    const cid = await node.add(readStream, { pin: true });
+    console.log(cid.cid.toString());
+    event.returnValue = cid.cid.toString();
+  } catch (err) {
+    console.log(err);
+    log.warn(err);
+    event.returnValue = -1;
+  }
+});
+
 // Call when want to start private chat with someone
 ipcMain.on('connect_peers', async (event, peerId) => {
   try {
@@ -380,7 +422,13 @@ ipcMain.on('connect_peers', async (event, peerId) => {
     await subscribe(node, peerId, peerConnecitonSender);
 
     // publish first message to initiate their callback
-    await publishWithoutEncryption(node, peerId, id, "let's connect");
+    await publishWithoutEncryption(
+      node,
+      peerId,
+      id,
+      'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+      "let's connect"
+    );
     event.returnValue = 'All Good';
   } catch (err) {
     console.error(err);
@@ -389,32 +437,41 @@ ipcMain.on('connect_peers', async (event, peerId) => {
 });
 
 // Call when want to publish message
-ipcMain.on('publish_message', async (event, channel, message, key = null) => {
-  try {
-    // Don't want to publish encrypted message to our channel
-    if (channel !== id) {
-      // encrypt with specified key
-      if (key) {
-        await publishp2pe(node, channel, id, message, key);
-        event.returnValue = 'All good';
+ipcMain.on(
+  'publish_message',
+  async (event, channel, message, key = null, username = id, imageHash) => {
+    try {
+      // Don't want to publish encrypted message to our channel
+      if (channel !== id) {
+        // encrypt with specified key
+        if (key) {
+          await publishp2pe(node, channel, username, imageHash, message, key);
+          event.returnValue = 'All good';
+        }
+        // encrypt with general channel key
+        else {
+          await publish(node, channel, username, imageHash, message);
+          event.returnValue = 'All good';
+        }
       }
-      // encrypt with general channel key
+      // publish unincrypted to ourself
       else {
-        await publish(node, channel, id, message);
+        await publishWithoutEncryption(
+          node,
+          channel,
+          username,
+          imageHash,
+          message
+        );
         event.returnValue = 'All good';
       }
+    } catch (err) {
+      event.returnValue = -1;
+      console.log(err);
+      log.warn(err);
     }
-    // publish unincrypted to ourself
-    else {
-      await publishWithoutEncryption(node, channel, id, message);
-      event.returnValue = 'All good';
-    }
-  } catch (err) {
-    event.returnValue = -1;
-    console.log(err);
-    log.warn(err);
   }
-});
+);
 
 // Call when want to get channel
 ipcMain.on('get_channels_list', async (event) => {

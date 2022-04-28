@@ -48,6 +48,7 @@ ipcRenderer.on('subscribe_to_topic', (event: any, topic: string) => {
 
 ipcRenderer.on('send_message', (event: any, msg: any) => {
   const message = JSON.parse(msg);
+
   if (!store.default.getState().peers.includes(message.sender)) {
     const peerList = ipcRenderer.sendSync(
       'get_peers_list',

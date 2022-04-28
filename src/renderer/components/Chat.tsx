@@ -26,6 +26,11 @@ const Chat = () => {
         {messages.map((message: any, index: any) => {
           return (
             <li className="item" key={index}>
+              <img
+                className="pfp-chat"
+                src={`https://ipfs.io/ipfs/${message.imageHash}`}
+                alt="pfp"
+              />
               {message.content}
             </li>
           );

@@ -12,70 +12,37 @@ body {
   justify-content: center;
   flex-wrap: wrap;
   align-items: center;
+  overflow: auto;
 }
 
-/* button {
-  background-color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
-  appearance: none;
-  font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
-    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
-  transition: all ease-in 0.1s;
-  cursor: pointer;
-  opacity: 0.9;
+.mycolumn {
+  width: 100%;
+  overflow: auto;
+  position: relative;
 }
-
-button:hover {
-  transform: scale(1.05);
-  opacity: 1;
-}
-
-li {
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-  height: fit-content;
-  width: fit-content;
-  margin: 10px;
-}
-
-a:hover {
-  opacity: 1;
-  text-decoration: none;
-}
-
-.Hello {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0;
-} */
 
 #channels {
   border: solid black 1px;
-  height: 80vh;
-  width: 20vh;
-  margin-right: 3px;
+  height: 79vh;
+  width: 25%;
   overflow: auto;
+  position: relative;
 }
 
 #chat {
   border: solid black 1px;
-  height: 80vh;
-  width: 50vh;
+  height: 79vh;
+  max-width: 49vw;
+  width: 49%;
   overflow: auto;
+  position: relative;
 }
 
 #peers {
   border: solid black 1px;
-  height: 80vh;
-  width: 20vh;
-  margin-left: 3px;
+  height: 79vh;
+  width: 25%;
+  position: relative;
 }
 
 div.inline {
@@ -85,8 +52,18 @@ div.inline {
 #textarea {
   border: solid black 1px;
   height: 10vh;
-  width: 81vh;
-  margin-top: 2px;
+  position: relative;
+  width: 90%;
+  display: inline;
+  box-shadow: 0 0 20px #777;
+}
+
+#send-message {
+  border: solid black 1px;
+  height: 10vh;
+  width: 9%;
+  display: inline;
+  /* position: absolute; */
 }
 
 #icon {
@@ -95,20 +72,22 @@ div.inline {
 
 #top {
   border: solid black 1px;
-  width: 91vh;
   display: flex;
   justify-content: space-between;
+  height: 6vh;
+  /* background: #fff; */
+  /* padding: 60px; */
+  box-shadow: 0 0 20px #777;
+}
+
+.container {
+  position: relative;
+  max-height: 500px;
+  margin: 0 auto;
 }
 
 #key {
   align-items: center;
-}
-
-#send-message {
-  border: solid black 1px;
-  height: 10vh;
-  width: 10vh;
-  margin-top: 2px;
 }
 
 .icon {
@@ -134,4 +113,39 @@ h3.header {
 
 .item {
   border-bottom: 1px rgb(178, 196, 192) solid;
+}
+
+.pfp-container {
+  position: relative;
+  text-align: center;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.profile-pic {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#picture {
+  position: relative;
+  max-height: 6vh;
+}
+
+.pfp {
+  max-width: 6vh;
+  max-height: 6vh
+}
+
+.pfp-chat {
+  display: inline;
+  max-width: 6vh;
+  max-height: 6vh
 }
