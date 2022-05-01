@@ -33,6 +33,7 @@ import LOBBY, {
   publish,
   publishp2pe,
 } from './network/pubsub';
+import { setRootDir, setDir } from './network/mfs';
 
 export default class AppUpdater {
   constructor() {
@@ -321,6 +322,9 @@ const createWindow = async () => {
 
   // spawn the node
   node = await startNode();
+
+  // create root dir for history
+  await setRootDir(node);
 
   // subscribe to first general channel
   await subscribe(node, LOBBY, echo);
