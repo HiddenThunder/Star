@@ -1,4 +1,10 @@
-export { deleteMessage, sendMessage, addChannel, decryptHistory } from './chat';
+export {
+  deleteMessage,
+  sendMessage,
+  addChannel,
+  decryptHistory,
+  setTopicHistory,
+} from './chat';
 export {
   setChannels,
   deleteChannel,

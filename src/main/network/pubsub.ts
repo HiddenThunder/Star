@@ -1,4 +1,5 @@
-const { privateKey, decryptMsg, encryptMsg } = require('../crypto');
+import { privateKey, decryptMsg, encryptMsg } from '../crypto';
+import { setFile } from './mfs';
 
 // Default private key that is being used for all general channels
 const PrivateKey =
@@ -20,6 +21,7 @@ export const subscribe = async (
   callback: Callback
 ) => {
   try {
+    await setFile(node, topic);
     await node.pubsub.subscribe(topic, callback);
   } catch (err) {
     console.log('From pubsub subscribing', err);

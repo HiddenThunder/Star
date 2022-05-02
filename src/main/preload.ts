@@ -3,6 +3,7 @@ const store = require('../renderer/state');
 const {
   sendMessage,
   addChannel,
+  setTopicHistory,
 } = require('../renderer/state/actionCreators/chat');
 const {
   setChannelsInternal,
@@ -10,6 +11,8 @@ const {
 } = require('../renderer/state/actionCreators/channels');
 const { setChannel } = require('../renderer/state/actionCreators/channel');
 const { setPeersInternal } = require('../renderer/state/actionCreators/peers');
+
+const { setKey } = require('../renderer/state/actionCreators/key');
 
 // This is known info
 
@@ -65,4 +68,10 @@ ipcRenderer.on('get_key', (event: any) => {
 
 ipcRenderer.on('set_key', (event: any, topic: string, key: string) => {
   store.default.dispatch(setChannelKey({ topic, key, p2p: true }, topic));
+});
+
+ipcRenderer.on('set_history', (event: any, topic: string, history: string) => {
+  const jsonHistory = JSON.parse(history);
+  store.default.dispatch(setTopicHistory(topic, jsonHistory.messages));
+  store.default.dispatch(setChannel(jsonHistory.channel));
 });
