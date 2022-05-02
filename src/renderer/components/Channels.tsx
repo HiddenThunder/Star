@@ -20,6 +20,10 @@ const Channels = () => {
 
   const changeChannel = (channel: any) => {
     setChannel(channel);
+    const res = ipc.sendSync('fetch-history', channel.topic);
+    if (res === -1) {
+      console.error("History fetch wasn't successfull :((");
+    }
   };
 
   return (

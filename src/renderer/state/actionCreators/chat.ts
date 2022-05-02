@@ -2,6 +2,7 @@ const SEND_MESSAGE = 'SEND_MESSAGE';
 const DELETE_MESSAGE = 'DELETE_MESSAGE';
 const SUBSCRIBE_TO_TOPIC = 'SUBSCRIBE_TO_TOPIC';
 const DECRYPT_CHANNEL_HISTORY = 'DECRYPT_CHANNEL_HISTORY';
+const SET_LOCAL_HISTORY = 'SET_LOCAL_HISTORY';
 
 // ACTION CREATORS
 
@@ -66,5 +67,13 @@ export const decryptHistory = (
     } catch (err) {
       console.error(err);
     }
+  };
+};
+
+export const setTopicHistory = (channel: string, messages: any) => {
+  return {
+    type: SET_LOCAL_HISTORY,
+    channel,
+    messages,
   };
 };

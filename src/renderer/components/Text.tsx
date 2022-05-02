@@ -45,7 +45,7 @@ const Text = () => {
           'publish_message',
           channel.topic,
           localText,
-          null,
+          undefined,
           username,
           imageHash
         );

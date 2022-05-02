@@ -33,6 +33,7 @@ import LOBBY, {
   publish,
   publishp2pe,
 } from './network/pubsub';
+import { setRootDir, saveHistory, fetchHistory, setFile } from './network/mfs';
 
 export default class AppUpdater {
   constructor() {
@@ -322,11 +323,18 @@ const createWindow = async () => {
   // spawn the node
   node = await startNode();
 
+  // create root dir for history
+  await setRootDir(node);
+
   // subscribe to first general channel
   await subscribe(node, LOBBY, echo);
+  const lobbyHistory = await fetchHistory(node, LOBBY);
 
   // update UI
   mainWindow?.webContents.send('subscribe_to_topic', LOBBY);
+  if (lobbyHistory !== -1) {
+    mainWindow?.webContents.send('set_history', LOBBY, lobbyHistory);
+  }
 
   // Get our peer id
   const me = await node.id();
@@ -514,6 +522,33 @@ ipcMain.on('decrypt_messages', async (event, messages: any, key: string) => {
       return message;
     });
     event.returnValue = decryptedMessages;
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
+  }
+});
+
+// Call when user wants to save history locally
+ipcMain.on('save-history', async (event, topic: string, history: any) => {
+  try {
+    await setFile(node, topic);
+    await saveHistory(node, topic, history);
+    event.returnValue = 'All good';
+  } catch (err) {
+    event.returnValue = -1;
+    console.log(err);
+    log.warn(err);
+  }
+});
+
+ipcMain.on('fetch-history', async (event, topic: string) => {
+  try {
+    const history = await fetchHistory(node, topic);
+    if (history !== -1) {
+      mainWindow?.webContents.send('set_history', topic, history);
+    }
+    event.returnValue = 'All good';
   } catch (err) {
     event.returnValue = -1;
     console.log(err);

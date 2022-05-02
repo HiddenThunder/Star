@@ -4,6 +4,7 @@ const SUBSCRIBE_TO_TOPIC = 'SUBSCRIBE_TO_TOPIC';
 const SEND_MESSAGE = 'SEND_MESSAGE';
 const DELETE_MESSAGE = 'DELETE_MESSAGE';
 const DECRYPT_CHANNEL_HISTORY = 'DECRYPT_CHANNEL_HISTORY';
+const SET_LOCAL_HISTORY = 'SET_LOCAL_HISTORY';
 
 // REDUCER
 export default function chatReducer(chat: any = { lobby: [] }, action: any) {
@@ -31,6 +32,11 @@ export default function chatReducer(chat: any = { lobby: [] }, action: any) {
         [action.message.channel]: chat[`${action.message.channel}`].filter(
           (msg: any) => msg.id !== action.messageId
         ),
+      };
+    case SET_LOCAL_HISTORY:
+      return {
+        ...chat,
+        [action.channel]: action.messages,
       };
 
     default:
