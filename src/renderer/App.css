@@ -137,15 +137,21 @@ h3.header {
 #picture {
   position: relative;
   max-height: 6vh;
+  border-radius: 50%;
+  border: solid 1px black;
 }
 
 .pfp {
   max-width: 6vh;
-  max-height: 6vh
+  max-height: 6vh;
+  border-radius: 50%;
+  border: solid 1px black;
 }
 
 .pfp-chat {
   display: inline;
+  border: solid 1px black;
+  border-radius: 50%;
   max-width: 6vh;
-  max-height: 6vh
+  max-height: 6vh;
 }
