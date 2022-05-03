@@ -7,12 +7,11 @@ const { ipc } = window.electron;
 
 const Channels = () => {
   const channels = useSelector((state) => state.channels);
+  const loadedChannels = useSelector((state) => state.loadedChannels);
 
   const dispatch = useDispatch();
-  const { setChannels, deleteChannel, setChannel } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { setChannels, deleteChannel, setChannel, addLoadedChannel } =
+    bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     setChannels(ipc);
@@ -20,9 +19,15 @@ const Channels = () => {
 
   const changeChannel = (channel: any) => {
     setChannel(channel);
-    const res = ipc.sendSync('fetch-history', channel.topic);
-    if (res === -1) {
-      console.error("History fetch wasn't successfull :((");
+    console.log(loadedChannels);
+    console.log(channel.topic);
+    if (!loadedChannels.includes(channel.topic)) {
+      const res = ipc.sendSync('fetch-history', channel.topic);
+      if (res === -1) {
+        console.error("History fetch wasn't successfull :((");
+      } else {
+        addLoadedChannel(channel.topic);
+      }
     }
   };
 

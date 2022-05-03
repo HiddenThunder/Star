@@ -16,12 +16,16 @@ import './App.css';
 
 const Hello = () => {
   const dispatch = useDispatch();
-  const { setChannel } = bindActionCreators(actionCreators, dispatch);
+  const { setChannel, addLoadedChannel } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
   const channel = useSelector((state) => state.channel);
 
   useEffect(() => {
     if (!channel.key) {
       setChannel({ topic: 'lobby', key: null });
+      addLoadedChannel('lobby');
     }
   }, []);
 
