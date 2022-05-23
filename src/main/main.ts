@@ -206,7 +206,7 @@ const createWindow = async () => {
         node,
         message.channel,
         id,
-        'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+        'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg',
         PrivKey.publicKey.toHex()
       );
 
@@ -263,7 +263,7 @@ const createWindow = async () => {
             node,
             id,
             id,
-            'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+            'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg',
             channelId
           );
         });
@@ -302,7 +302,7 @@ const createWindow = async () => {
           node,
           message.content,
           id,
-          'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+          'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg',
           PrivKey.publicKey.toHex()
         );
 
@@ -354,14 +354,14 @@ const createWindow = async () => {
     node,
     LOBBY,
     id,
-    'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+    'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg',
     `joined channel`
   );
   await publishWithoutEncryption(
     node,
     id,
     id,
-    'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+    'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg',
     `I'm subscribed to myself`
   );
 
@@ -434,7 +434,7 @@ ipcMain.on('connect_peers', async (event, peerId) => {
       node,
       peerId,
       id,
-      'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg',
+      'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg',
       "let's connect"
     );
     event.returnValue = 'All Good';

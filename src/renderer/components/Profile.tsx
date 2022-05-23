@@ -30,7 +30,7 @@ const Profile = () => {
   const [value, setValue] = useState(username || '');
   const [imageLink, setImageLink] = useState(
     imageHash ||
-      'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg'
+      'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg'
   );
 
   const dispatch = useDispatch();
@@ -104,7 +104,7 @@ const Profile = () => {
             id="picture"
             src={`https://ipfs.io/ipfs/${
               imageHash ||
-              'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg'
+              'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg'
             }`}
             alt="pfp"
           />

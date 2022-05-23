@@ -107,9 +107,5 @@ Model aka Dialog
 
 - https://reactcommunity.org/react-modal/accessibility/
 
-## By the way
 
-When I started this repo I also got a [Milady](https://opensea.io/collection/milady). So you can say that I was a bit inspired by the collection while was building
-
-Hope it'll add some spirituality to the network
-![milady](./assets/README/milady.jpeg)
+![milady](./assets/README/mamimi.jpeg)

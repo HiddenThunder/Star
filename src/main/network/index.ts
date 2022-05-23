@@ -29,7 +29,7 @@ export const startNode = async () => {
         EXPERIMENTAL: {
           ipnsPubsub: true,
         },
-        repo: path.join(os.homedir(), '.point'),
+        repo: path.join(os.homedir(), '.star'),
         config: {
           Datastore: {
             StorageMax: '34GB',
