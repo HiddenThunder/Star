@@ -13,7 +13,7 @@ const Text = () => {
   const username = profile.username || undefined;
   const imageHash =
     profile.imageHash ||
-    'bafybeiepwqesubkeths5n3uinxrq2ngulbdbsqrxxo33uiludsnbwten6y/milady.jpeg';
+    'bafybeib4sa3coc325mb2zmhpxbvphbjqhvwxn7jl3g26m3ha5l2t54mxme/mamimi.jpeg';
 
   //* REDUX STUFF
   const dispatch = useDispatch();
