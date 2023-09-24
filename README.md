@@ -107,5 +107,3 @@ Model aka Dialog
 
 - https://reactcommunity.org/react-modal/accessibility/
 
-
-![milady](./assets/README/mamimi.jpeg)
